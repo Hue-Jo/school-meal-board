@@ -16,7 +16,7 @@ Neis의 오픈API를 활용하여
 - 급식식단정보 https://open.neis.go.kr/hub/mealServiceDietInfo
 
 ## ERD
-![SchoolMealERD2](https://github.com/user-attachments/assets/83bca116-47d7-4ed2-bcce-6274677e8344)
+![SchoolMealERDFinal2](https://github.com/user-attachments/assets/7a1ca916-6477-4a30-98a4-aa12a629c691)
 
   
 ## 프로젝트 기능 및 설계 
@@ -51,11 +51,11 @@ Neis의 오픈API를 활용하여
 ### 2. 급식 정보 확인
    
 - [급식정보 저장]
-  - API로부터 현재로부터 6개월 전부터의 내용을 받아 데이터베이스에 저장
+  - API로부터 지난달, 이번달, 다음달(총 3달)의 데이터를 받아 데이터베이스에 저장
   - 주기적으로 싱크(매일 오전 10시) 받도록 함
-    - Spring Scheduler 사용
-  - 매월 1일마다, 7개월이 지난 데이터는 삭제됨
-    - Spring Scheduler 사용
+    - Spring Batch 사용 
+  - 매월 1일마다, 1개월이 지난 데이터는 삭제됨
+    - Spring Batch 사용 
     
 - [급식정보 반환] 
   - 학교코드와 특정날짜 입력 후 급식 정보 반환
@@ -98,5 +98,8 @@ Neis의 오픈API를 활용하여
 - 하루에 서로 다른 10명에게 신고를 당할 시 이용정지
 - 이용정지 일주일 후 자동으로 정지해제
 - 신고자는 신고이유 작성
-- 하루에 동일인에 대한 중복 신고 불가
+- 당일 중복신고 불가
+  - 신고자가 동일 피신고자를 같은 날 신고한 이력이 있는지 확인 후 신고처리
+- 이용정지 해제 후 재신고 가능
+  - 신고자의 신고일이 피신고자의 이용정지종료일 이후인지 확인 후 신고처리
 
