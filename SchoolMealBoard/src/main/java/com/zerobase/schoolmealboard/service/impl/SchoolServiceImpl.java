@@ -65,8 +65,8 @@ public class SchoolServiceImpl implements SchoolService {
 
         // 응답 데이터를 JSON으로 파싱하여 "row" 배열에 접근
         JsonNode rows = objectMapper.readTree(response.getBody())
-                                    .path("schoolInfo")
-                                    .path(1).path("row");
+            .path("schoolInfo")
+            .path(1).path("row");
 
         // "row" 배열이 비어있거나 남은 데이터가 없으면 반복 종료
         if (!rows.isArray() || rows.isEmpty()) {
