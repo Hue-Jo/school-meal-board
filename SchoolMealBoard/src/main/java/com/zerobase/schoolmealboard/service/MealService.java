@@ -7,5 +7,4 @@ public interface MealService {
 
   void fetchAndSaveMealInfo();
 
-  void processMealData(JsonNode rows, School school, String formattedDate);
-}
+  }
