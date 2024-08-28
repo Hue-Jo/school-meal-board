@@ -1,7 +1,7 @@
 package com.zerobase.schoolmealboard.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zerobase.schoolmealboard.ApiResponse.MealResponse;
 import com.zerobase.schoolmealboard.entity.Meal;
 import com.zerobase.schoolmealboard.entity.School;
 import com.zerobase.schoolmealboard.repository.MealRepository;
@@ -11,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
+
 
 @Service
 @RequiredArgsConstructor
@@ -39,46 +41,75 @@ public class MealServiceImpl implements MealService {
   private final String EDU_OFFICE_CODE = "J10"; // 경기도교육청 코드
   private final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
 
+  @PostConstruct
+  public void init() {
+    fetchAndSaveMealInfo();
+  }
+
+  @Override
   @Transactional
   public void fetchAndSaveMealInfo() {
     LocalDate now = LocalDate.now();
     LocalDate startDate = now.minusMonths(1);
     LocalDate endDate = now.plusMonths(1);
 
-    List<School> schools = schoolRepository.findAll(); // 저장된 학교 정보 가져오기
+    // 모든 학교 코드  조회
+    List<School> schools = schoolRepository.findAll();
 
+    // 각 학교에 대해 API 요청
     for (School school : schools) {
       String schoolCode = school.getSchoolCode();
 
+      // 날짜 범위 내 반복
       for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
         String formattedDate = date.format(DATE_FORMAT);
-        String url = String.format(
-            "%s?KEY=%s&Type=json&pIndex=%d&pSize=%d&ATPT_OFCDC_SC_CODE=%s&SD_SCHUL_CODE=%s&MLSV_FROM_YMD=%s&MLSV_TO_YMD=%s",
-            API_URL, apiKey, 1, 100, EDU_OFFICE_CODE, schoolCode, formattedDate,
-            formattedDate);
+
+        String url = UriComponentsBuilder
+            .fromHttpUrl(API_URL)
+            .queryParam("KEY", apiKey)
+            .queryParam("Type", "json")
+            .queryParam("pIndex", 1) // 페이지 인덱스는 1로 고정 (한 페이지만 가져올 경우)
+            .queryParam("pSize", 100) // 페이지 크기 설정
+            .queryParam("ATPT_OFCDC_SC_CODE", EDU_OFFICE_CODE)
+            .queryParam("SD_SCHUL_CODE", schoolCode)
+            .queryParam("MLSV_YMD", formattedDate)
+            .toUriString(); // URL 문자열로 반환
 
         try {
+          // API에 GET 요청을 보내고 응답 받기
           ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
+          // API 호출 실패시 로그기록 후 다음으로 넘어감
           if (response.getStatusCode() != HttpStatus.OK) {
             log.error("API로부터 데이터를 받아오는 데에 실패했습니다. 상태 코드: {}", response.getStatusCode());
             continue;
           }
 
-          JsonNode rows = objectMapper.readTree(response.getBody())
-              .path("mealServiceDietInfo")
-              .path(1).path("row");
+          // JSON에서 Response로 변환
+          MealResponse mealResponse = objectMapper.readValue(response.getBody(), MealResponse.class);
+          List<MealResponse.MealServiceDietInfo> mealInfoList = mealResponse.getMealServiceDietInfo();
 
-          if (!rows.isArray() || rows.isEmpty()) {
-            continue;
+          if (mealInfoList == null) {
+            continue; // 급식 정보가 없으면 다음 날짜로 넘어감
           }
 
-          for (JsonNode node : rows) {
-            String mealNames = node.path("DDISH_NM").asText();
-            LocalDate mealDate = LocalDate.parse(node.path("MLSV_YMD").asText(),DATE_FORMAT);
+          List<MealResponse.MealRow> rows = mealInfoList.get(1).getRow();  // 데이터 추출
 
-            // 기존 데이터와 중복을 피하기 위해 중복 검사
-            if (!mealRepository.existsBySchoolCodeAndMealDate(school, mealDate)) {
+          // 데이터를 순회하며 메뉴와 날짜 DB에 저장
+          for (MealResponse.MealRow row : rows) {
+            String mealNames = row.getMealName();
+            LocalDate mealDate = LocalDate.parse(row.getMealDate(), DATE_FORMAT);
+
+            // 기존 데이터 조회
+            Optional<Meal> existingMealOptional = mealRepository.findBySchoolCodeAndMealDate(school, mealDate);
+
+            if (existingMealOptional.isPresent()) {
+              // 기존 데이터가 있으면 업데이트
+              Meal existingMeal = existingMealOptional.get();
+              existingMeal.setMealNames(mealNames);
+              mealRepository.save(existingMeal);
+            } else {
+              // 기존 데이터가 없으면 새로 추가
               Meal meal = new Meal();
               meal.setSchoolCode(school);
               meal.setMealNames(mealNames);
@@ -88,8 +119,7 @@ public class MealServiceImpl implements MealService {
           }
 
         } catch (Exception e) {
-          log.error("급식 정보를 가져오고 저장하는 중 예외가 발생했습니다. 학교 코드: {}, 날짜: {}"
-                    , schoolCode, formattedDate, e);
+          log.error("급식 정보를 가져오고 저장하는 중 예외 발생", e);
         }
       }
     }
