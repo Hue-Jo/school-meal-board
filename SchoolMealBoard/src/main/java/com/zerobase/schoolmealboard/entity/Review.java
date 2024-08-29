@@ -29,4 +29,5 @@ public class Review {
   private String content; // 100자평
   private int rating;     // 별점 (1-5점)
   private String imgUrl;  // 이미지 (선택적)
+
 }

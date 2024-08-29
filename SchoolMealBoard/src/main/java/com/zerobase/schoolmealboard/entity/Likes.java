@@ -23,5 +23,4 @@ public class Likes {
   @JoinColumn(name = "user_id")
   private User userId;  // 공감한 유저
 
-
 }
