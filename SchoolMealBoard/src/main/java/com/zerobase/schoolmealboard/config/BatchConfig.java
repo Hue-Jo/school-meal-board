@@ -46,7 +46,7 @@ public class BatchConfig {
   @Bean
   public Job deleteOldMealJob(JobRepository jobRepository,
       PlatformTransactionManager transactionManager) {
-    return new JobBuilder("deleteOldDataJob", jobRepository)
+    return new JobBuilder("deleteOldMealJob", jobRepository)
         .start(deleteOldMealStep(jobRepository, transactionManager))
         .build();
   }
@@ -54,13 +54,13 @@ public class BatchConfig {
   @Bean
   public Step deleteOldMealStep(JobRepository jobRepository,
       PlatformTransactionManager transactionManager) {
-    return new StepBuilder("deleteOldDataStep", jobRepository)
-        .tasklet(deleteOldDataTasklet(), transactionManager)
+    return new StepBuilder("deleteOldMealStep", jobRepository)
+        .tasklet(deleteOldMealTasklet(), transactionManager)
         .build();
   }
 
   @Bean
-  public Tasklet deleteOldDataTasklet() {
+  public Tasklet deleteOldMealTasklet() {
     return ((contribution, chunkContext) -> {
       mealService.deleteOldMeal(); //  두 달 전 데이터 삭제
       return RepeatStatus.FINISHED;

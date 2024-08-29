@@ -23,6 +23,7 @@ public class Scheduler {
   }
 
 
+  // 매월 1일마다 2개월 전의 데이터 삭제하도록 스케줄링
   @Scheduled(cron = "0 0 0 1 * *")
   public void scheduleDeleteOldMeal() {
     log.info("2개월 전의 급식 데이터가 삭제됩니다.");

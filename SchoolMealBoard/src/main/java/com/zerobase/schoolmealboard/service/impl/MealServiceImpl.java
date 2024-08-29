@@ -106,22 +106,19 @@ public class MealServiceImpl implements MealService {
               LocalDate mealDate = LocalDate.parse(row.getMealDate(), DATE_FORMAT);
 
               // 기존 데이터 조회
-              Optional<Meal> existingMealOptional = mealRepository.findBySchoolCodeAndMealDate(
-                  school, mealDate);
-
-              if (existingMealOptional.isPresent()) {
-                // 기존 데이터가 있으면 업데이트
-                Meal existingMeal = existingMealOptional.get();
-                existingMeal.setMealNames(mealNames);
-                mealRepository.save(existingMeal);
-              } else {
-                // 기존 데이터가 없으면 새로 추가
-                Meal meal = new Meal();
-                meal.setSchoolCode(school);
-                meal.setMealNames(mealNames);
-                meal.setMealDate(mealDate);
-                mealRepository.save(meal);
-              }
+              mealRepository.findBySchoolCodeAndMealDate(school, mealDate)
+                  .ifPresentOrElse(existingMeal -> {
+                    // 기존 데이터가 있으면 업데이트
+                    existingMeal.setMealNames(mealNames);
+                    mealRepository.save(existingMeal);
+                  }, () -> {
+                    // 기존 데이터가 없으면 새로 추가
+                    Meal meal = new Meal();
+                    meal.setSchoolCode(school);
+                    meal.setMealNames(mealNames);
+                    meal.setMealDate(mealDate);
+                    mealRepository.save(meal);
+                  });
             }
 
           } catch (Exception e) {
@@ -140,7 +137,7 @@ public class MealServiceImpl implements MealService {
   public void deleteOldMeal() {
     LocalDate now = LocalDate.now();
     LocalDate twoMonthsAgoStartDate = now.minusMonths(2).withDayOfMonth(1); // 두 달 전의 첫째 날
-    LocalDate twoMonthsAgoEndDate = twoMonthsAgoStartDate.withDayOfMonth(twoMonthsAgoStartDate.lengthOfMonth()); // 두 달전의 마지막 날
+    LocalDate twoMonthsAgoEndDate = twoMonthsAgoStartDate.withDayOfMonth(twoMonthsAgoStartDate.lengthOfMonth()); // 두 달 전의 마지막 날
 
     // 두 달 전 데이터 삭제
     mealRepository.deleteByMealDateBetween(twoMonthsAgoStartDate, twoMonthsAgoEndDate);
