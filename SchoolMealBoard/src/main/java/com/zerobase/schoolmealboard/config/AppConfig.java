@@ -18,11 +18,4 @@ public class AppConfig {
   public ObjectMapper objectMapper() {
     return new ObjectMapper();
   }
-
-  @Bean
-  public WebClient webClient() {
-    return WebClient.builder()
-        .baseUrl("https://open.neis.go.kr/hub/mealServiceDietInfo")
-        .build();
-  }
 }
