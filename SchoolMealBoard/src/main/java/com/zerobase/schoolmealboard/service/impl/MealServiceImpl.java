@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -44,10 +45,6 @@ public class MealServiceImpl implements MealService {
   private final String EDU_OFFICE_CODE = "J10"; // 경기도교육청 코드
   private final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-  @PostConstruct
-  public void init() {
-    fetchAndSaveMealInfo();
-  }
 
   @Override
   @Transactional
@@ -137,4 +134,16 @@ public class MealServiceImpl implements MealService {
 
     } while (page.hasNext()); // 다음 페이지가 있는 경우 반복
   }
+
+  // 2달 전 급식 데이터 삭제 (ex. 9월 1일이 되면 7월 1~31일의 데이터 삭제)
+  @Override
+  public void deleteOldMeal() {
+    LocalDate now = LocalDate.now();
+    LocalDate twoMonthsAgoStartDate = now.minusMonths(2).withDayOfMonth(1); // 두 달 전의 첫째 날
+    LocalDate twoMonthsAgoEndDate = twoMonthsAgoStartDate.withDayOfMonth(twoMonthsAgoStartDate.lengthOfMonth()); // 두 달전의 마지막 날
+
+    // 두 달 전 데이터 삭제
+    mealRepository.deleteByMealDateBetween(twoMonthsAgoStartDate, twoMonthsAgoEndDate);
+  }
+
 }

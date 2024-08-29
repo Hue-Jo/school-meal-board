@@ -10,4 +10,6 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
 
   Optional<Meal> findBySchoolCodeAndMealDate(School schoolCode, LocalDate mealDate);
 
+  void deleteByMealDateBetween(LocalDate startDate, LocalDate endDate);
+
 }

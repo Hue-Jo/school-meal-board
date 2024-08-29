@@ -1,11 +1,11 @@
 package com.zerobase.schoolmealboard.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.zerobase.schoolmealboard.entity.School;
-import java.util.List;
-
 public interface MealService {
 
-   void fetchAndSaveMealInfo();
+  // API로부터 받은 데이터 저장
+  void fetchAndSaveMealInfo();
 
-  }
+  // 2달 전 급식 데이터 삭제
+  void deleteOldMeal();
+
+}
