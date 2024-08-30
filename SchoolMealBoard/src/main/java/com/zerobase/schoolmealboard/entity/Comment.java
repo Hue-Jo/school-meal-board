@@ -26,4 +26,5 @@ public class Comment {
   private String content; // 댓글 내용
   private int liked;      // 공감수
 
+
 }

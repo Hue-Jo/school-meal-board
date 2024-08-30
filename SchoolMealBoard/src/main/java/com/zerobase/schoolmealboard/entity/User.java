@@ -26,4 +26,5 @@ public class User {
   private String nickName;  // 닉네임
 
   private LocalDate banEndDate;   // 이용정지 종료일
+
 }

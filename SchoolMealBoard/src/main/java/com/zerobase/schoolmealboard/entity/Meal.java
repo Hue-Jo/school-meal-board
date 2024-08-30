@@ -32,5 +32,6 @@ public class Meal {
   @Column(length = 500)
   private String mealNames;   // 급식 메뉴
   private LocalDate mealDate; // 급식 일자
+
 }
 
