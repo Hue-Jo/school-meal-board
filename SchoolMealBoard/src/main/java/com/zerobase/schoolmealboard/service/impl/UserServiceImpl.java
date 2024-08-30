@@ -1,12 +1,15 @@
 package com.zerobase.schoolmealboard.service.impl;
 
 import com.zerobase.schoolmealboard.dto.UserDto;
+import com.zerobase.schoolmealboard.dto.UserDto.LogIn;
 import com.zerobase.schoolmealboard.dto.UserDto.SignUp;
+import com.zerobase.schoolmealboard.dto.UserDto.Update;
 import com.zerobase.schoolmealboard.entity.School;
 import com.zerobase.schoolmealboard.entity.User;
 import com.zerobase.schoolmealboard.repository.SchoolRepository;
 import com.zerobase.schoolmealboard.repository.UserRepository;
 import com.zerobase.schoolmealboard.service.UserService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,11 +31,9 @@ public class UserServiceImpl implements UserService {
     if (userRepository.findByPhoneNum(signInDto.getPhoneNum()).isPresent()) {
       return "중복 가입은 불가능합니다.";
     }
-
     if (userRepository.findByEmail(signInDto.getEmail()).isPresent()) {
       return "이미 사용중인 이메일입니다.";
     }
-
     if (userRepository.findByNickName(signInDto.getNickname()).isPresent()) {
       return "이미 사용중인 닉네임입니다.";
     }
@@ -51,18 +52,37 @@ public class UserServiceImpl implements UserService {
 
 
   /**
+   * 로그인
+   */
+  @Override
+  public String logIn(LogIn logInDto) {
+
+    Optional<User> userOpt = userRepository.findByEmail(logInDto.getEmail());
+
+    if (userOpt.isEmpty()) {
+      return "등록되지 않은 이메일입니다. 회원가입하시겠습니까?";
+    }
+
+    User user = userOpt.get();
+
+    if (!passwordEncoder.matches(logInDto.getPassword(), user.getPassword())) {
+      return "비밀번호가 일치하지 않습니다.";
+    }
+
+    return "로그인 되었습니다.";
+  }
+
+  /**
    * 회원정보 수정
    */
-
-
+  @Override
+  public String updateProfile(Update updateDto) {
+    return "";
+  }
 
   /**
    * 회원 탈퇴
    */
 
-
-  /**
-   * 로그인
-   */
 
 }

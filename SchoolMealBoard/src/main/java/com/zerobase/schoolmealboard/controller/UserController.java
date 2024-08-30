@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,19 @@ public class UserController {
   //
   @PostMapping("/sign-up")
   public ResponseEntity<String> signUp(@RequestBody @Valid UserDto.SignUp signUpDto) {
-    return ResponseEntity.status(HttpStatus.CREATED)
-                          .body(userService.signUp(signUpDto));
+    return ResponseEntity.status(HttpStatus.CREATED).body(userService.signUp(signUpDto));
   }
+
+  @PostMapping("/login")
+  public ResponseEntity<String> login(@RequestBody @Valid UserDto.LogIn loginDto) {
+    return ResponseEntity.ok(userService.logIn(loginDto));
+  }
+
+
+  @PatchMapping("/update-profile")
+  public ResponseEntity<String> updateProfile(@RequestBody @Valid UserDto.Update updateDto) {
+    return ResponseEntity.status((HttpStatus.OK)).body(userService.updateProfile(updateDto));
+  }
+
+
 }
