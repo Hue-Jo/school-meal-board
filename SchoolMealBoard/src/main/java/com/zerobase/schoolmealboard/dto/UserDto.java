@@ -1,5 +1,6 @@
 package com.zerobase.schoolmealboard.dto;
 
+import com.zerobase.schoolmealboard.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ public class UserDto {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class SignIn {
+  public static class SignUp {
 
     @NotNull(message = "핸드폰 번호를 입력하세요.")
     @Size(max = 13, message = "13자리 이상 입력할 수 없습니다.")
@@ -35,6 +36,15 @@ public class UserDto {
     @NotBlank(message = "재학중인 학교의 학교코드를 작성해주세요. 학교코드를 모른다면 학교코드 찾기를 누르세요")
     private String schoolCode;
 
+
+    public static User toUser(SignUp signUp) {
+      return User.builder()
+          .phoneNum(signUp.phoneNum)
+          .email(signUp.email)
+          .password(signUp.password)
+          .nickName(signUp.nickname)
+          .build();
+    }
   }
 
   @Data
