@@ -11,7 +11,6 @@ import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -45,6 +43,10 @@ public class MealServiceImpl implements MealService {
   private final String EDU_OFFICE_CODE = "J10"; // 경기도교육청 코드
   private final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
 
+  @PostConstruct
+  public void init() {
+    fetchAndSaveMealInfo();
+  }
 
   @Override
   @Transactional
@@ -91,7 +93,8 @@ public class MealServiceImpl implements MealService {
             }
 
             // JSON에서 Response로 변환
-            MealResponse mealResponse = objectMapper.readValue(response.getBody(), MealResponse.class);
+            MealResponse mealResponse = objectMapper.readValue(response.getBody(),
+                MealResponse.class);
             List<MealResponse.MealServiceDietInfo> mealInfoList = mealResponse.getMealServiceDietInfo();
 
             if (mealInfoList == null) {
@@ -132,15 +135,16 @@ public class MealServiceImpl implements MealService {
     } while (page.hasNext()); // 다음 페이지가 있는 경우 반복
   }
 
+
   // 2달 전 급식 데이터 삭제 (ex. 9월 1일이 되면 7월 1~31일의 데이터 삭제)
   @Override
   public void deleteOldMeal() {
     LocalDate now = LocalDate.now();
     LocalDate twoMonthsAgoStartDate = now.minusMonths(2).withDayOfMonth(1); // 두 달 전의 첫째 날
-    LocalDate twoMonthsAgoEndDate = twoMonthsAgoStartDate.withDayOfMonth(twoMonthsAgoStartDate.lengthOfMonth()); // 두 달 전의 마지막 날
+    LocalDate twoMonthsAgoEndDate = twoMonthsAgoStartDate.withDayOfMonth(
+        twoMonthsAgoStartDate.lengthOfMonth()); // 두 달 전의 마지막 날
 
     // 두 달 전 데이터 삭제
     mealRepository.deleteByMealDateBetween(twoMonthsAgoStartDate, twoMonthsAgoEndDate);
   }
-
 }

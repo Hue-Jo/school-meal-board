@@ -10,7 +10,8 @@ public interface UserService {
   // 회원가입
   String signUp(SignUp signUpDto);
 
-  String updateProfile(Update updateDto);
-
+  // 로그인
   String logIn(LogIn logInDto);
+
+  String updateUser(Update updateDto, String email);
 }

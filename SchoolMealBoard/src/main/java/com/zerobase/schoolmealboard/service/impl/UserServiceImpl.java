@@ -69,15 +69,31 @@ public class UserServiceImpl implements UserService {
       return "비밀번호가 일치하지 않습니다.";
     }
 
-    return "로그인 되었습니다.";
+    return "로그인 되었습니다. ";
   }
+
 
   /**
    * 회원정보 수정
    */
   @Override
-  public String updateProfile(Update updateDto) {
-    return "";
+  public String updateUser(Update updateDto, String email) {
+
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("등록되지 않은 이메일"));
+
+    if (!passwordEncoder.matches(updateDto.getCurrentPassword(), user.getPassword())) {
+      return "비밀번호가 일치하지 않습니다.";
+    }
+
+    if (passwordEncoder.matches(updateDto.getNewPassword(), user.getPassword())) {
+      return "현재의 비밀번호와 동일한 비밀번호로는 수정할 수 없습니다. 새로운 비밀번호를 등록해주세요";
+    }
+
+    if (userRepository.findByNickName(updateDto.getNewNickname()).isPresent()) {
+      return "이미 사용중인 닉네임입니다.";
+    }
+
+    return "회원 정보가 수정되었습니다.";
   }
 
   /**
