@@ -8,13 +8,14 @@ import com.zerobase.schoolmealboard.repository.SchoolRepository;
 import com.zerobase.schoolmealboard.service.SchoolService;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -102,5 +103,13 @@ public class SchoolServiceImpl implements SchoolService {
         break;
       }
     }
+  }
+
+  @Override
+  public String getSchoolCode(String schoolName) {
+    Optional<School> optionalSchool = schoolRepository.findBySchoolName(schoolName);
+    return optionalSchool
+        .map(School::getSchoolCode)
+        .orElseThrow(() -> new RuntimeException("학교를 찾을 수 없습니다."));
   }
 }
