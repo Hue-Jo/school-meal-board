@@ -60,6 +60,9 @@ public class UserDto {
     @Size(min = 8, max = 20, message = "비밀번호는 8자리 이상 20자리 이하로 입력해야 합니다.")
     private String newPassword;
 
+    @NotBlank(message = "새 닉네임을 입력해주세요")
+    private String newNickname;
+
     @NotBlank(message = "새 학교코드를 작성해주세요. 학교코드를 모른다면 학교코드 찾기를 누르세요")
     private String newSchoolCode;
   }
