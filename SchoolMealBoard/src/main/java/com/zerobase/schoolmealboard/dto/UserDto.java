@@ -37,7 +37,7 @@ public class UserDto {
     private String schoolCode;
 
 
-    public static User toUser(SignUp signUp) {
+    public static User toEntity(SignUp signUp) {
       return User.builder()
           .phoneNum(signUp.phoneNum)
           .email(signUp.email)

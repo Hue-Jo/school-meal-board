@@ -18,7 +18,7 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
         //HTTP 요청에 대한 권한
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/user/sign-up", "/user/login", "school/find-schoolcode").permitAll()
+            .requestMatchers("user/sign-up", "user/login", "school/find-schoolcode", "review/create").permitAll()
             .anyRequest().authenticated()
         )
         //  폼 로그인 기능을 비활성화
