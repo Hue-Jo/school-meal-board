@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
       return "이미 사용중인 닉네임입니다.";
     }
 
-    User user = UserDto.SignUp.toUser(signInDto);
+    User user = UserDto.SignUp.toEntity(signInDto);
 
     School schoolCode = schoolRepository.findById(signInDto.getSchoolCode())
         .orElseThrow(() -> new RuntimeException("학교코드를 정확히 적어주세요."));
