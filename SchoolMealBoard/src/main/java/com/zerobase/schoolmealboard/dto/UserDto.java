@@ -63,8 +63,7 @@ public class UserDto {
     @NotBlank(message = "새 닉네임을 입력해주세요")
     private String newNickname;
 
-    @NotBlank(message = "새 학교코드를 작성해주세요. 학교코드를 모른다면 학교코드 찾기를 누르세요")
-    private String newSchoolCode;
+
   }
 
   @Data

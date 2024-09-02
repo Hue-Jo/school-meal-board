@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public String logIn(LogIn loginDto) {
 
-    var registedUser = userRepository.findByEmail(loginDto.getEmail())
+    User registedUser = userRepository.findByEmail(loginDto.getEmail())
         .orElseThrow(() -> new RuntimeException("등록되지 않은 이메일입니다."));
 
     if (passwordEncoder.matches(loginDto.getPassword(), registedUser.getPassword())) {
@@ -82,6 +82,10 @@ public class UserServiceImpl implements UserService {
       throw new RuntimeException("현재 비밀번호가 일치하지 않습니다.");
     }
 
+    if (userRepository.findByNickName(updateDto.getNewNickname()).isPresent()) {
+      throw new RuntimeException("이미 존재하는 닉네임입니다. 다른 닉네임을 적어주세요");
+    }
+
     String encodedNewPassword = passwordEncoder.encode(updateDto.getNewPassword());
     user.setPassword(encodedNewPassword);
     user.setNickName(updateDto.getNewNickname());
@@ -92,6 +96,19 @@ public class UserServiceImpl implements UserService {
   /**
    * 회원 탈퇴
    */
+  public String deleteUser(String email, UserDto.Delete deleteDto) {
+
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("등록되지 않은 이메일입니다."));
+
+    // 현재 비밀번호 확인
+    if (!passwordEncoder.matches(deleteDto.getPassword(), user.getPassword())) {
+      throw new RuntimeException("현재 비밀번호가 일치하지 않습니다.");
+    }
+
+    userRepository.delete(user);
+    return "탈퇴처리가 완료되었습니다.";
+  }
 
 
 }

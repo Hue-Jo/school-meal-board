@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +46,20 @@ public class UserController {
     // 사용자 정보 업데이트
     try {
       String result = userService.updateUser(email, updateDto);
+      return ResponseEntity.ok(result);
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+  }
+
+  @DeleteMapping("/delete")
+  public ResponseEntity<String> delete(@RequestHeader("Authorization") String header,
+                                      @RequestBody @Valid UserDto.Delete deleteDto) {
+    String token = header.replace("Bearer ", "");
+    String email = jwtUtil.extractUsername(token);
+
+    try{
+      String result = userService.deleteUser(email, deleteDto);
       return ResponseEntity.ok(result);
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

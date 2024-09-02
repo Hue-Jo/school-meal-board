@@ -14,4 +14,6 @@ public interface UserService {
   String logIn(LogIn logInDto);
 
   String updateUser(String email, Update updateDto);
+
+  String deleteUser(String email, UserDto.Delete deleteDto);
 }
