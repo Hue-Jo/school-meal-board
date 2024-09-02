@@ -13,5 +13,5 @@ public interface UserService {
   // 로그인
   String logIn(LogIn logInDto);
 
-  String updateUser(Update updateDto, String email);
+  String updateUser(String email, Update updateDto);
 }
