@@ -27,12 +27,22 @@ public class UserController {
   //
   @PostMapping("/sign-up")
   public ResponseEntity<String> signUp(@RequestBody @Valid UserDto.SignUp signUpDto) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(userService.signUp(signUpDto));
+    try {
+      userService.signUp(signUpDto);
+      return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
   }
 
   @PostMapping("/login")
   public ResponseEntity<String> login(@RequestBody @Valid UserDto.LogIn loginDto) {
-    return ResponseEntity.status(HttpStatus.OK).body(userService.logIn(loginDto));
+    try {
+      String token = userService.logIn(loginDto);
+      return ResponseEntity.status(HttpStatus.OK).body("로그인되었습니다. 토큰: " + token);
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
   }
 
   @PatchMapping("/update")
@@ -44,8 +54,8 @@ public class UserController {
 
     // 사용자 정보 업데이트
     try {
-      String result = userService.updateUser(email, updateDto);
-      return ResponseEntity.ok(result);
+      userService.updateUser(email, updateDto);
+      return ResponseEntity.ok("회원정보가 성공적으로 수정되었습니다.");
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
@@ -57,9 +67,9 @@ public class UserController {
     String token = header.replace("Bearer ", "");
     String email = jwtUtil.extractUsername(token);
 
-    try{
-      String result = userService.deleteUser(email, deleteDto);
-      return ResponseEntity.ok(result);
+    try {
+      userService.deleteUser(email, deleteDto);
+      return ResponseEntity.ok("탈퇴처리가 완료되었습니다.");
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }

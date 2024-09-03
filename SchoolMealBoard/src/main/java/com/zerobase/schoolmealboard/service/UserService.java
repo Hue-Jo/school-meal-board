@@ -4,16 +4,19 @@ import com.zerobase.schoolmealboard.dto.UserDto;
 import com.zerobase.schoolmealboard.dto.UserDto.LogIn;
 import com.zerobase.schoolmealboard.dto.UserDto.SignUp;
 import com.zerobase.schoolmealboard.dto.UserDto.Update;
+import com.zerobase.schoolmealboard.entity.User;
 
 public interface UserService {
 
   // 회원가입
-  String signUp(SignUp signUpDto);
+  void signUp(SignUp signUpDto);
 
   // 로그인
   String logIn(LogIn logInDto);
 
-  String updateUser(String email, Update updateDto);
+  // 회원정보 수정
+  void updateUser(String email, Update updateDto);
 
-  String deleteUser(String email, UserDto.Delete deleteDto);
+  // 탈퇴
+  void deleteUser(String email, UserDto.Delete deleteDto);
 }
