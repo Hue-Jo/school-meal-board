@@ -13,11 +13,11 @@ public class MealResponse {
   @JsonProperty("mealServiceDietInfo")
   private List<MealServiceDietInfo> mealServiceDietInfo;
 
-
   @Data
   @JsonIgnoreProperties(ignoreUnknown = true)
   public static class MealServiceDietInfo {
 
+    @JsonProperty("row")
     private List<MealRow> row;
   }
 

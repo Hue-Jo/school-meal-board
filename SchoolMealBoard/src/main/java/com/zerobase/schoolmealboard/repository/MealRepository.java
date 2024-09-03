@@ -13,7 +13,7 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
 
   Optional<Meal> findBySchoolCodeAndMealDate(School schoolCode, LocalDate mealDate);
 
-  @Query(value = "DELETE meal WHERE meal_date BETWEEN :startDate AND :endDate", nativeQuery = true)
+  @Query(value = "DELETE FROM meal WHERE meal_date BETWEEN :startDate AND :endDate", nativeQuery = true)
   void deleteByMealDateBetween(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 }

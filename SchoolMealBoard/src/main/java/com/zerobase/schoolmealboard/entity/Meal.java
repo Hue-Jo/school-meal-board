@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.cglib.core.Local;
 
 @Entity
 @Getter
@@ -31,6 +32,8 @@ public class Meal {
 
   @Column(length = 500)
   private String mealNames;   // 급식 메뉴
+
+  @Column
   private LocalDate mealDate; // 급식 일자
 
 }
