@@ -1,7 +1,6 @@
 package com.zerobase.schoolmealboard.controller;
 
-import com.zerobase.schoolmealboard.component.security.JwtFilter;
-import com.zerobase.schoolmealboard.component.security.JwtUtil;
+import com.zerobase.schoolmealboard.component.security.JwtTokenProvider;
 import com.zerobase.schoolmealboard.dto.UserDto;
 import com.zerobase.schoolmealboard.service.UserService;
 import jakarta.validation.Valid;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
-  private final JwtUtil jwtUtil;
+  private final JwtTokenProvider jwtUtil;
 
 
   //

@@ -1,6 +1,6 @@
 package com.zerobase.schoolmealboard.service.impl;
 
-import com.zerobase.schoolmealboard.component.security.JwtUtil;
+import com.zerobase.schoolmealboard.component.security.JwtTokenProvider;
 import com.zerobase.schoolmealboard.dto.UserDto;
 import com.zerobase.schoolmealboard.dto.UserDto.LogIn;
 import com.zerobase.schoolmealboard.dto.UserDto.SignUp;
@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final SchoolRepository schoolRepository;
   private final PasswordEncoder passwordEncoder;
-  private final JwtUtil jwtUtil;
+  private final JwtTokenProvider jwtUtil;
 
   /**
    * 회원가입

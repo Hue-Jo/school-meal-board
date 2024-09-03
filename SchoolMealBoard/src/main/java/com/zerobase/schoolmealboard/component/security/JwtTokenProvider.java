@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class JwtUtil {
+public class JwtTokenProvider {
 
   // 비밀키
   @Value("${spring.jwt.secret}")
