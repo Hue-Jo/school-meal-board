@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
-  private final JwtTokenProvider jwtUtil;
+  private final JwtTokenProvider jwtProvider;
 
 
   //
@@ -30,7 +30,7 @@ public class UserController {
     try {
       userService.signUp(signUpDto);
       return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
-    } catch (IllegalArgumentException e) {
+    } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
   }
@@ -50,7 +50,7 @@ public class UserController {
                                       @RequestBody @Valid UserDto.Update updateDto) {
     // JWT 토큰에서 이메일 추출
     String token = header.replace("Bearer ", "");
-    String email = jwtUtil.extractUsername(token);
+    String email = jwtProvider.extractUsername(token);
 
     // 사용자 정보 업데이트
     try {
@@ -65,7 +65,7 @@ public class UserController {
   public ResponseEntity<String> delete(@RequestHeader("Authorization") String header,
                                       @RequestBody @Valid UserDto.Delete deleteDto) {
     String token = header.replace("Bearer ", "");
-    String email = jwtUtil.extractUsername(token);
+    String email = jwtProvider.extractUsername(token);
 
     try {
       userService.deleteUser(email, deleteDto);

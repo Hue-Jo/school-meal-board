@@ -1,9 +1,7 @@
 package com.zerobase.schoolmealboard.service;
 
 import com.zerobase.schoolmealboard.ApiResponse.MealResponse;
-import com.zerobase.schoolmealboard.ApiResponse.MealResponse.MealServiceDietInfo;
 import com.zerobase.schoolmealboard.entity.School;
-import java.util.List;
 
 public interface MealService {
 
@@ -18,5 +16,11 @@ public interface MealService {
 
   // 2달 전 급식 데이터 삭제
   void deleteOldMeal();
+
+//  // 학교코드와 특정날짜 입력 후 급식 정보 조회
+//  void getMealData();
+//
+//  // 학교코드와 특정기간 내 날짜 (일주일) 입력후 학생들의 평균 별점을 계산하여 반환
+//  void getRatedMealData();
 
 }

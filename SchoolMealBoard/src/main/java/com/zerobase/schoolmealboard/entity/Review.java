@@ -10,16 +10,13 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 public class Review {
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long reviewId;
@@ -39,3 +36,4 @@ public class Review {
   private String imgUrl;  // 이미지 (선택적)
 
 }
+
