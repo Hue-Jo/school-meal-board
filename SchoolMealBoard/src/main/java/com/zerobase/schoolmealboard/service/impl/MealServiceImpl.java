@@ -39,10 +39,10 @@ public class MealServiceImpl implements MealService {
   private final String EDU_OFFICE_CODE = "J10"; // 경기도교육청 코드
   private final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-  @PostConstruct
-  public void init() {
-    fetchAndSaveMealInfo();
-  }
+//  @PostConstruct
+//  public void init() {
+//    fetchAndSaveMealInfo();
+//  }
 
   @Override
   @Transactional
@@ -150,4 +150,6 @@ public class MealServiceImpl implements MealService {
     // 두 달 전 데이터 삭제
     mealRepository.deleteByMealDateBetween(twoMonthsAgoStartDate, twoMonthsAgoEndDate);
   }
+
+
 }

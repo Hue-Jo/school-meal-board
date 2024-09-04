@@ -1,5 +1,7 @@
 package com.zerobase.schoolmealboard.exceptions;
 
+import com.zerobase.schoolmealboard.exceptions.custom.MealNotFoundException;
+import com.zerobase.schoolmealboard.exceptions.custom.UserNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,12 +35,22 @@ public class GlobalExceptionHandler {
   }
 
 
-  @ExceptionHandler(HttpMessageNotReadableException.class)
-  protected ResponseEntity<ErrorResponse> handleInvalidDateFormat(HttpMessageNotReadableException e) {
-    ErrorResponse errorResponse = ErrorResponse.builder()
-        .statusCode(HttpStatus.BAD_REQUEST.value()) // 400 Bad Request
-        .message("날짜는 yyyy-MM-dd 형식으로 작성해야 합니다. 예: 2024-08-15")
-        .build();
-    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+//  @ExceptionHandler(HttpMessageNotReadableException.class)
+//  protected ResponseEntity<ErrorResponse> handleInvalidDateFormat(HttpMessageNotReadableException e) {
+//    ErrorResponse errorResponse = ErrorResponse.builder()
+//        .statusCode(HttpStatus.BAD_REQUEST.value()) // 400 Bad Request
+//        .message("날짜는 yyyy-MM-dd 형식으로 작성해야 합니다. 예: 2024-08-15")
+//        .build();
+//    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+//  }
+
+  @ExceptionHandler(UserNotFoundException.class)
+  public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(MealNotFoundException.class)
+  public ResponseEntity<String> handleMealNotFoundException(MealNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 }

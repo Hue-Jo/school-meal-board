@@ -1,7 +1,6 @@
 package com.zerobase.schoolmealboard.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.zerobase.schoolmealboard.entity.Review;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -19,8 +18,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReviewDto {
 
-  @NotBlank
-  @JsonFormat(pattern = "yyMMdd")
+  @NotNull(message = "날짜는 yyyy-mm-dd로 적어주세요 ex.2024-08-15")
+  @JsonFormat(pattern = "yyyy-MM-dd")
   private LocalDate mealDate; // 급식날짜
 
   @NotBlank
@@ -38,13 +37,5 @@ public class ReviewDto {
 
   private String imgUrl;  // 사진은 선택
 
-  public static Review toEntity(ReviewDto reviewDto) {
-    return Review.builder()
-        .date(reviewDto.mealDate)
-        .title(reviewDto.title)
-        .content(reviewDto.content)
-        .rating(reviewDto.rating)
-        .imgUrl(reviewDto.imgUrl)
-        .build();
-  }
+
 }
