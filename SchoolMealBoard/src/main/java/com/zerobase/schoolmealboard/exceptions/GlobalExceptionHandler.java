@@ -1,6 +1,7 @@
 package com.zerobase.schoolmealboard.exceptions;
 
 import com.zerobase.schoolmealboard.exceptions.custom.MealNotFoundException;
+import com.zerobase.schoolmealboard.exceptions.custom.ReviewNotFoundException;
 import com.zerobase.schoolmealboard.exceptions.custom.UserNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +52,11 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(MealNotFoundException.class)
   public ResponseEntity<String> handleMealNotFoundException(MealNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(ReviewNotFoundException.class)
+  public ResponseEntity<String> handleReviewNotFoundException(ReviewNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 }
