@@ -96,4 +96,16 @@ public class ReviewServiceImpl implements ReviewService {
         .build();
   }
 
+  @Override
+  public void deleteReview(Long reviewId, String email) {
+
+    userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다."));
+
+    reviewRepository.findById(reviewId)
+        .orElseThrow(() -> new ReviewNotFoundException("리뷰 게시글이 존재하지 않습니다."));
+
+    reviewRepository.deleteById(reviewId);
+
+  }
+
 }

@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,9 @@ public class ReviewController {
   private final ReviewService reviewService;
   private final JwtTokenProvider jwtTokenProvider;
 
+  /**
+   * 리뷰 작성 (로그인 이후 사용 가능)
+   */
   @PostMapping("/create")
   public ResponseEntity<ReviewDto> createReview(@RequestHeader("Authorization") String header,
                                                 @RequestBody @Valid ReviewDto reviewDto) {
@@ -52,5 +56,19 @@ public class ReviewController {
     ReviewDto editedReview = reviewService.editReview(reviewId, editReviewDto, email);
 
     return ResponseEntity.ok(editedReview);
+  }
+
+  /**
+   * 리뷰 삭제 (작성자 ONLY)
+   */
+  @DeleteMapping("/delete/{reviewId}")
+  public ResponseEntity<String> deleteReview(@RequestHeader("Authorization") String header,
+                                            @PathVariable Long reviewId) {
+    // JWT 토큰에서 이메일 추출
+    String token = header.replace("Bearer ", "");
+    String email = jwtTokenProvider.extractUsername(token);
+
+    reviewService.deleteReview(reviewId, email);
+    return ResponseEntity.ok("리뷰가 삭제되었습니다.");
   }
 }
