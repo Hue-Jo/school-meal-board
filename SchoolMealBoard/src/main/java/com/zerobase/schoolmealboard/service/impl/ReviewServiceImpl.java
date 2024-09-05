@@ -68,18 +68,22 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     // 수정된 내용
-    if (editReviewDto.getTitle() != null) {
+    if (editReviewDto.getTitle() != null && !editReviewDto.getTitle().isEmpty()) {
       review.setTitle(editReviewDto.getTitle());
     }
-    if (editReviewDto.getContent() != null) {
+
+    if (editReviewDto.getContent() != null && !editReviewDto.getContent().isEmpty()) {
       review.setContent(editReviewDto.getContent());
     }
+
     if (editReviewDto.getRating() > 0) {
       review.setRating(editReviewDto.getRating());
     }
-    if (editReviewDto.getImgUrl() != null) {
+
+    if (editReviewDto.getImgUrl() != null && !editReviewDto.getImgUrl().isEmpty()) {
       review.setImgUrl(editReviewDto.getImgUrl());
     }
+
     // 리뷰 수정본 저장
     review = reviewRepository.save(review);
 
