@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,11 +37,10 @@ public class ReviewController {
    */
   @PostMapping("/create")
   public ResponseEntity<ReviewDto> createReview(
-      @RequestHeader("Authorization") String header,
       @RequestBody @Valid ReviewDto reviewDto) {
-    // JWT 토큰에서 이메일 추출
-    String token = header.replace("Bearer ", "");
-    String email = jwtTokenProvider.extractUsername(token);
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
 
     ReviewDto createdReview = reviewService.createReview(reviewDto, email);
 
@@ -52,16 +53,15 @@ public class ReviewController {
   /**
    * 리뷰 수정 (작성자 ONLY)
    */
-  @PatchMapping("/edit/{reviewId}")
+  @PatchMapping("/edit/{id}")
   public ResponseEntity<ReviewDto> editReview(
-      @RequestHeader("Authorization") String header,
-      @PathVariable Long reviewId,
+      @PathVariable Long id,
       @RequestBody @Valid ReviewDto.EditReviewDto editReviewDto) {
-    // JWT 토큰에서 이메일 추출
-    String token = header.replace("Bearer ", "");
-    String email = jwtTokenProvider.extractUsername(token);
 
-    ReviewDto editedReview = reviewService.editReview(reviewId, editReviewDto, email);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+
+    ReviewDto editedReview = reviewService.editReview(id, editReviewDto, email);
 
     return ResponseEntity.ok(editedReview);
   }
@@ -69,15 +69,15 @@ public class ReviewController {
   /**
    * 리뷰 삭제 (작성자 ONLY)
    */
-  @DeleteMapping("/delete/{reviewId}")
+  @DeleteMapping("/delete/{id}")
   public ResponseEntity<String> deleteReview(
       @RequestHeader("Authorization") String header,
-      @PathVariable Long reviewId) {
+      @PathVariable Long id) {
 
     String token = header.replace("Bearer ", "");
     String email = jwtTokenProvider.extractUsername(token);
 
-    reviewService.deleteReview(reviewId, email);
+    reviewService.deleteReview(id, email);
     return ResponseEntity.ok("리뷰가 삭제되었습니다.");
   }
 
@@ -86,12 +86,11 @@ public class ReviewController {
    */
   @GetMapping
   public ResponseEntity<Page<ReviewDto>> getAllReviews(
-      @RequestHeader("Authorization") String header,
       @RequestParam(defaultValue = "0") int page, // 기본 페이지 번호 0
       @RequestParam(defaultValue = "20") int size) { // 기본 페이지 사이즈 20
 
-    String token = header.replace("Bearer ", "");
-    String email = jwtTokenProvider.extractUsername(token);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
 
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
     Page<ReviewDto> reviews = reviewService.getAllReviews(email, pageable);
@@ -101,14 +100,13 @@ public class ReviewController {
   /**
    * 내가 쓴 리뷰 조회 (최신순 정렬, 페이징처리)
    */
-  @GetMapping("/my")
+  @GetMapping("/my-review")
   public ResponseEntity<Page<ReviewDto>> getAllMyReviews(
-      @RequestHeader("Authorization") String header,
       @RequestParam(defaultValue = "0") int page, // 기본 페이지 번호 0
       @RequestParam(defaultValue = "20") int size) { // 기본 페이지 사이즈 20
 
-    String token = header.replace("Bearer ", "");
-    String email = jwtTokenProvider.extractUsername(token);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
 
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
     Page<ReviewDto> reviews = reviewService.getAllMyReviews(email, pageable);
@@ -118,15 +116,14 @@ public class ReviewController {
   /**
    * 특정 리뷰 조회
    */
-  @GetMapping("/{reviewId}")
+  @GetMapping("/{id}")
   public ResponseEntity<ReviewDto> getSpecificReview(
-      @PathVariable Long reviewId,
-      @RequestHeader("Authorization") String header) {
+      @PathVariable Long id) {
 
-    String token = header.replace("Bearer ", "");
-    String email = jwtTokenProvider.extractUsername(token);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
 
-    ReviewDto review = reviewService.getSpecificReview(reviewId, email);
+    ReviewDto review = reviewService.getSpecificReview(id, email);
     return ResponseEntity.ok(review);
   }
 }

@@ -127,7 +127,7 @@ public class ReviewServiceImpl implements ReviewService {
     Pageable sortedByDate = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
         Sort.Direction.DESC, "date");
 
-    return reviewRepository.findByUserId(user, sortedByDate).map(this::toDto);
+    return reviewRepository.findAllByUserId(user, sortedByDate).map(this::toDto);
   }
 
   // 특정 게시물 조회
