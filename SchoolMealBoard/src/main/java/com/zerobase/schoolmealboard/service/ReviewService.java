@@ -13,6 +13,7 @@ public interface ReviewService {
   ReviewDto editReview(Long reviewId, ReviewDto.EditReviewDto editReviewDto, String email);
 
   // 리뷰 삭제 (작성자만)
+  void deleteReview(Long reviewId, String email);
 
   // 전체 리뷰 조회 (페이징 처리/ 최신순 정렬)
   Page<ReviewDto> getAllReviews(String email, Pageable pageable);
