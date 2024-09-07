@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,11 +48,10 @@ public class UserController {
   }
 
   @PatchMapping("/update")
-  public ResponseEntity<String> update(@RequestHeader("Authorization") String header,
-                                      @RequestBody @Valid UserDto.Update updateDto) {
-    // JWT 토큰에서 이메일 추출
-    String token = header.replace("Bearer ", "");
-    String email = jwtProvider.extractUsername(token);
+  public ResponseEntity<String> update(@RequestBody @Valid UserDto.Update updateDto) {
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
 
     // 사용자 정보 업데이트
     try {
@@ -62,10 +63,10 @@ public class UserController {
   }
 
   @DeleteMapping("/delete")
-  public ResponseEntity<String> delete(@RequestHeader("Authorization") String header,
-                                      @RequestBody @Valid UserDto.Delete deleteDto) {
-    String token = header.replace("Bearer ", "");
-    String email = jwtProvider.extractUsername(token);
+  public ResponseEntity<String> delete(@RequestBody @Valid UserDto.Delete deleteDto) {
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
 
     try {
       userService.deleteUser(email, deleteDto);

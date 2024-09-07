@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
-  private final JwtTokenProvider jwtUtil;
+  private final JwtTokenProvider jwtTokenProvider;
 
   public static final String TOKEN_HEADER = "Authorization";
   public static final String TOKEN_PREFIX = "Bearer ";
@@ -30,11 +30,13 @@ public class JwtFilter extends OncePerRequestFilter {
     // 요청에서 JWT 추출
     String token = extractTokenFromRequest(request);
 
-    if (StringUtils.hasText(token) && jwtUtil.validateToken(token,
-        jwtUtil.extractUsername(token))) {
+    if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token, jwtTokenProvider.extractUsername(token))) {
       // 유효한 토큰일 경우, Authentication 객체를 생성하여 SecurityContext에 설정
-      Authentication auth = jwtUtil.getAuthentication(token);
+      Authentication auth = jwtTokenProvider.getAuthentication(token);
       SecurityContextHolder.getContext().setAuthentication(auth);
+      log.debug("인증된 유저. 토큰 : {}", token);
+    } else {
+      log.debug("유효하지 않은 토큰");
     }
 
     filterChain.doFilter(request, response);
