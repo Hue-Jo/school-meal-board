@@ -2,7 +2,6 @@ package com.zerobase.schoolmealboard.controller;
 
 import com.zerobase.schoolmealboard.dto.CommentDto;
 import com.zerobase.schoolmealboard.service.CommentService;
-import com.zerobase.schoolmealboard.service.impl.CommentServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,18 +20,17 @@ public class CommentController {
 
   private final CommentService commentService;
 
-
   @PostMapping("/create/{id}")
   public ResponseEntity<CommentDto> createComment(
       @PathVariable Long id,
-      @RequestBody String content) {
+      @RequestBody CommentDto commentDto) {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String email = authentication.getName();
 
-    CommentDto createdComment = commentService.createComment(id, content, email);
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
+    CommentDto createdComment = commentService.createComment(id, commentDto.getContent(), email);
+    return (createdComment != null) ?
+        ResponseEntity.status(HttpStatus.CREATED).body(createdComment) :
+        ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
-
 }
