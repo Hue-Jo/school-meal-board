@@ -1,5 +1,6 @@
 package com.zerobase.schoolmealboard.exceptions;
 
+import com.zerobase.schoolmealboard.exceptions.custom.CommentNotFoundException;
 import com.zerobase.schoolmealboard.exceptions.custom.MealNotFoundException;
 import com.zerobase.schoolmealboard.exceptions.custom.ReviewNotFoundException;
 import com.zerobase.schoolmealboard.exceptions.custom.UnAuthorizedUser;
@@ -64,5 +65,9 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(UnAuthorizedUser.class)
   public ResponseEntity<String> handleUnAuthorizedUser(UnAuthorizedUser ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+  }
+  @ExceptionHandler(CommentNotFoundException.class)
+  public ResponseEntity<String> handleCommentNotFoundException(CommentNotFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
   }
 }
