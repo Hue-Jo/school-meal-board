@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,4 +34,18 @@ public class CommentController {
         ResponseEntity.status(HttpStatus.CREATED).body(createdComment) :
         ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
+
+  @PatchMapping("/edit/{id}")
+  public ResponseEntity<CommentDto> editComment(
+      @PathVariable Long id,
+      @RequestBody CommentDto commentDto) {
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+
+    CommentDto editedComment = commentService.editComment(id, commentDto.getContent(), email);
+    return ResponseEntity.status(HttpStatus.OK).body(editedComment);
+  }
+
+
 }
