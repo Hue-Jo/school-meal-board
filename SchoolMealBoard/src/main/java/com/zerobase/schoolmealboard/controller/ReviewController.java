@@ -35,7 +35,7 @@ public class ReviewController {
   /**
    * 리뷰 작성 (로그인 이후 사용 가능)
    */
-  @PostMapping("/create")
+  @PostMapping
   public ResponseEntity<ReviewDto> createReview(
       @RequestBody @Valid ReviewDto reviewDto) {
 
@@ -52,7 +52,7 @@ public class ReviewController {
   /**
    * 리뷰 수정 (작성자 ONLY)
    */
-  @PatchMapping("/edit/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<ReviewDto> editReview(
       @PathVariable Long id,
       @RequestBody @Valid ReviewDto.EditReviewDto editReviewDto) {
@@ -67,7 +67,7 @@ public class ReviewController {
   /**
    * 리뷰 삭제 (작성자 ONLY)
    */
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<String> deleteReview(
       @RequestHeader("Authorization") String header,
       @PathVariable Long id) {
@@ -97,7 +97,7 @@ public class ReviewController {
   /**
    * 내가 쓴 리뷰 조회 (최신순 정렬, 페이징처리)
    */
-  @GetMapping("/my-review")
+  @GetMapping("/my-reviews")
   public ResponseEntity<Page<ReviewDto>> getAllMyReviews(
       @RequestParam(defaultValue = "0") int page, // 기본 페이지 번호 0
       @RequestParam(defaultValue = "20") int size) { // 기본 페이지 사이즈 20

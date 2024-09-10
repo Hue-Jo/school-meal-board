@@ -1,6 +1,5 @@
 package com.zerobase.schoolmealboard.entity;
 
-import com.zerobase.schoolmealboard.repository.LikesRepository;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -38,5 +37,5 @@ public class Comment {
   private int liked;      // 공감수
 
   @CreationTimestamp //  댓글 작성 시간 자동 추가
-  private LocalDateTime createdDate; // 댓글 작성시간
+  private LocalDateTime createdDateTime; // 댓글 작성시간
 }

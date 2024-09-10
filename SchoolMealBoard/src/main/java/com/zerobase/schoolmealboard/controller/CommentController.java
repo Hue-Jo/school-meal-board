@@ -28,7 +28,7 @@ public class CommentController {
   private final LikeService likeService;
   private final UserRepository userRepository;
 
-  @PostMapping("/{id}/create")
+  @PostMapping("/{id}")
   public ResponseEntity<CommentDto> createComment(
       @PathVariable Long id,
       @RequestBody CommentDto commentDto) {
@@ -40,7 +40,7 @@ public class CommentController {
         ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
-  @PatchMapping("/{id}/edit")
+  @PatchMapping("/{id}")
   public ResponseEntity<CommentDto> editComment(
       @PathVariable Long id,
       @RequestBody CommentDto commentDto) {
@@ -52,7 +52,7 @@ public class CommentController {
         ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
-  @DeleteMapping("/{id}/delete")
+  @DeleteMapping("/{id}")
   public ResponseEntity<String> deleteComment(@PathVariable Long id) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -60,7 +60,7 @@ public class CommentController {
     return ResponseEntity.status(HttpStatus.OK).body("댓글이 삭제되었습니다.");
   }
 
-  @PostMapping("/{id}/like")
+  @PostMapping("/{id}/likes")
   public ResponseEntity<String> toggleLike(@PathVariable Long id) {
 
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -76,7 +76,7 @@ public class CommentController {
     }
   }
 
-  @GetMapping("/{id}/lists/by-date")
+  @GetMapping("/{id}/sorted-by-date")
   public ResponseEntity<List<CommentDto>> getCommentsByDate(@PathVariable Long id) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -85,7 +85,7 @@ public class CommentController {
 
   }
 
-  @GetMapping("/{id}/lists/by-likes")
+  @GetMapping("/{id}/sorted-by-likes")
   public ResponseEntity<List<CommentDto>> getCommentsByLikes(@PathVariable Long id) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
