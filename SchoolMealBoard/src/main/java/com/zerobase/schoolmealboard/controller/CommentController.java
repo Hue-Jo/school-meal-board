@@ -1,7 +1,10 @@
 package com.zerobase.schoolmealboard.controller;
 
 import com.zerobase.schoolmealboard.dto.CommentDto;
+import com.zerobase.schoolmealboard.exceptions.custom.UnAuthorizedUser;
+import com.zerobase.schoolmealboard.repository.UserRepository;
 import com.zerobase.schoolmealboard.service.CommentService;
+import com.zerobase.schoolmealboard.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommentController {
 
   private final CommentService commentService;
+  private final LikeService likeService;
+  private final UserRepository userRepository;
 
   @PostMapping("/create/{id}")
   public ResponseEntity<CommentDto> createComment(
@@ -54,4 +59,21 @@ public class CommentController {
     commentService.deleteComment(id, email);
     return ResponseEntity.status(HttpStatus.OK).body("댓글이 삭제되었습니다.");
   }
+
+  @PostMapping("/like/{id}")
+  public ResponseEntity<String> toggleLike(
+      @PathVariable Long id) {
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    Long userId = userRepository.findByEmail(email).get().getUserId();
+
+    try {
+      String likeResult = likeService.toggleLike(id, userId);
+      return ResponseEntity.status(HttpStatus.OK).body(likeResult);
+    } catch (UnAuthorizedUser e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    } catch (RuntimeException e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("공감처리 중 오류 발생");
+    }
+  }
+
 }

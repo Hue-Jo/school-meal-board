@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Like {
+public class Likes {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +25,11 @@ public class Like {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "comment_id")
-  private Comment commentId;
+  private Comment comment;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
-  private User userId;
+  private User user;
 
 
 }
