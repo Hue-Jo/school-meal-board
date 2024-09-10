@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/comments")
 @RequiredArgsConstructor
 public class CommentController {
 
@@ -25,9 +26,7 @@ public class CommentController {
   public ResponseEntity<CommentDto> createComment(
       @PathVariable Long id,
       @RequestBody CommentDto commentDto) {
-
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     CommentDto createdComment = commentService.createComment(id, commentDto.getContent(), email);
     return (createdComment != null) ?
@@ -39,13 +38,20 @@ public class CommentController {
   public ResponseEntity<CommentDto> editComment(
       @PathVariable Long id,
       @RequestBody CommentDto commentDto) {
-
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     CommentDto editedComment = commentService.editComment(id, commentDto.getContent(), email);
-    return ResponseEntity.status(HttpStatus.OK).body(editedComment);
+    return (editedComment != null) ?
+        ResponseEntity.status(HttpStatus.OK).body(editedComment) :
+        ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
+  @DeleteMapping("/delete/{id}")
+  public ResponseEntity<String> deleteComment(
+      @PathVariable Long id) {
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
+    commentService.deleteComment(id, email);
+    return ResponseEntity.status(HttpStatus.OK).body("댓글이 삭제되었습니다.");
+  }
 }
