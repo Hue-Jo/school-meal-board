@@ -50,6 +50,7 @@ public class CommentServiceImpl implements CommentService {
     return new CommentDto(savedComment);
   }
 
+  @Override
   @Transactional
   public CommentDto editComment(Long commentId, String content, String email) {
     User user = validateUser(email);
@@ -65,6 +66,7 @@ public class CommentServiceImpl implements CommentService {
     return new CommentDto(editedComment);
   }
 
+  @Override
   @Transactional
   public void deleteComment(Long commentId, String email) {
 
@@ -87,6 +89,7 @@ public class CommentServiceImpl implements CommentService {
   public List<CommentDto> getCommentsByCreatedDate(Long reviewId, String email) {
     User user = validateUser(email);
     Review review = validateReview(reviewId);
+
     List<Comment> comments = commentRepository.findByReviewIdOrderByCreatedDateAsc(review);
 
     return comments.stream()
@@ -98,9 +101,9 @@ public class CommentServiceImpl implements CommentService {
   // 댓글 조회 (공감순)
   @Transactional(readOnly = true)
   public List<CommentDto> getCommentsByLikes(Long reviewId, String email) {
-
     User user = validateUser(email);
     Review review = validateReview(reviewId);
+
     List<Comment> comments = commentRepository.findByReviewIdOrderByLikedDesc(review);
 
     return comments.stream()

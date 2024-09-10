@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/review")
+@RequestMapping("/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
 
@@ -39,8 +39,7 @@ public class ReviewController {
   public ResponseEntity<ReviewDto> createReview(
       @RequestBody @Valid ReviewDto reviewDto) {
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     ReviewDto createdReview = reviewService.createReview(reviewDto, email);
 
@@ -58,8 +57,7 @@ public class ReviewController {
       @PathVariable Long id,
       @RequestBody @Valid ReviewDto.EditReviewDto editReviewDto) {
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     ReviewDto editedReview = reviewService.editReview(id, editReviewDto, email);
 
@@ -89,8 +87,7 @@ public class ReviewController {
       @RequestParam(defaultValue = "0") int page, // 기본 페이지 번호 0
       @RequestParam(defaultValue = "20") int size) { // 기본 페이지 사이즈 20
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
     Page<ReviewDto> reviews = reviewService.getAllReviews(email, pageable);
@@ -105,8 +102,7 @@ public class ReviewController {
       @RequestParam(defaultValue = "0") int page, // 기본 페이지 번호 0
       @RequestParam(defaultValue = "20") int size) { // 기본 페이지 사이즈 20
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
     Page<ReviewDto> reviews = reviewService.getAllMyReviews(email, pageable);
@@ -120,8 +116,7 @@ public class ReviewController {
   public ResponseEntity<ReviewDto> getSpecificReview(
       @PathVariable Long id) {
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     ReviewDto review = reviewService.getSpecificReview(id, email);
     return ResponseEntity.ok(review);

@@ -5,12 +5,13 @@ import com.zerobase.schoolmealboard.exceptions.custom.UnAuthorizedUser;
 import com.zerobase.schoolmealboard.repository.UserRepository;
 import com.zerobase.schoolmealboard.service.CommentService;
 import com.zerobase.schoolmealboard.service.LikeService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +28,7 @@ public class CommentController {
   private final LikeService likeService;
   private final UserRepository userRepository;
 
-  @PostMapping("/create/{id}")
+  @PostMapping("/{id}/create")
   public ResponseEntity<CommentDto> createComment(
       @PathVariable Long id,
       @RequestBody CommentDto commentDto) {
@@ -39,7 +40,7 @@ public class CommentController {
         ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
-  @PatchMapping("/edit/{id}")
+  @PatchMapping("/{id}/edit")
   public ResponseEntity<CommentDto> editComment(
       @PathVariable Long id,
       @RequestBody CommentDto commentDto) {
@@ -51,18 +52,17 @@ public class CommentController {
         ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
-  @DeleteMapping("/delete/{id}")
-  public ResponseEntity<String> deleteComment(
-      @PathVariable Long id) {
+  @DeleteMapping("/{id}/delete")
+  public ResponseEntity<String> deleteComment(@PathVariable Long id) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     commentService.deleteComment(id, email);
     return ResponseEntity.status(HttpStatus.OK).body("댓글이 삭제되었습니다.");
   }
 
-  @PostMapping("/like/{id}")
-  public ResponseEntity<String> toggleLike(
-      @PathVariable Long id) {
+  @PostMapping("/{id}/like")
+  public ResponseEntity<String> toggleLike(@PathVariable Long id) {
+
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
     Long userId = userRepository.findByEmail(email).get().getUserId();
 
@@ -74,6 +74,23 @@ public class CommentController {
     } catch (RuntimeException e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("공감처리 중 오류 발생");
     }
+  }
+
+  @GetMapping("/{id}/lists/by-date")
+  public ResponseEntity<List<CommentDto>> getCommentsByDate(@PathVariable Long id) {
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+    List<CommentDto> comments = commentService.getCommentsByCreatedDate(id, email);
+    return ResponseEntity.status(HttpStatus.OK).body(comments);
+
+  }
+
+  @GetMapping("/{id}/lists/by-likes")
+  public ResponseEntity<List<CommentDto>> getCommentsByLikes(@PathVariable Long id) {
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+    List<CommentDto> comments = commentService.getCommentsByLikes(id, email);
+    return ResponseEntity.status(HttpStatus.OK).body(comments);
   }
 
 }
