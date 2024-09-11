@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Version;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,4 +39,7 @@ public class Comment {
 
   @CreationTimestamp //  댓글 작성 시간 자동 추가
   private LocalDateTime createdDateTime; // 댓글 작성시간
+
+  @Version
+  private Long version;
 }
