@@ -1,11 +1,12 @@
 package com.zerobase.schoolmealboard.exceptions;
 
+import com.zerobase.schoolmealboard.exceptions.custom.BannedUserException;
 import com.zerobase.schoolmealboard.exceptions.custom.CommentNotFoundException;
 import com.zerobase.schoolmealboard.exceptions.custom.MealNotFoundException;
 import com.zerobase.schoolmealboard.exceptions.custom.ReviewNotFoundException;
 import com.zerobase.schoolmealboard.exceptions.custom.UnAuthorizedUser;
+import com.zerobase.schoolmealboard.exceptions.custom.UnReportableException;
 import com.zerobase.schoolmealboard.exceptions.custom.UserNotFoundException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException e) {
+  public ResponseEntity<Map<String, String>> handleValidationExceptions(
+      MethodArgumentNotValidException e) {
     Map<String, String> errors = e.getBindingResult().getFieldErrors().stream()
         .collect(Collectors.toMap(
             FieldError::getField,
@@ -38,14 +40,10 @@ public class GlobalExceptionHandler {
   }
 
 
-//  @ExceptionHandler(HttpMessageNotReadableException.class)
-//  protected ResponseEntity<ErrorResponse> handleInvalidDateFormat(HttpMessageNotReadableException e) {
-//    ErrorResponse errorResponse = ErrorResponse.builder()
-//        .statusCode(HttpStatus.BAD_REQUEST.value()) // 400 Bad Request
-//        .message("날짜는 yyyy-MM-dd 형식으로 작성해야 합니다. 예: 2024-08-15")
-//        .build();
-//    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
-//  }
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<String> handleInvalidDateFormat(HttpMessageNotReadableException e) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+  }
 
   @ExceptionHandler(UserNotFoundException.class)
   public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
@@ -66,8 +64,19 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleUnAuthorizedUser(UnAuthorizedUser ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
   }
+
   @ExceptionHandler(CommentNotFoundException.class)
   public ResponseEntity<String> handleCommentNotFoundException(CommentNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(UnReportableException.class)
+  public ResponseEntity<String> handleUnReportableException(UnReportableException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(BannedUserException.class)
+  public ResponseEntity<String> handleBannedUserException(BannedUserException ex) {
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
   }
 }
