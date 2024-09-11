@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
   // 댓글이 달린 순서대로 조회
-  List<Comment> findByReviewIdOrderByCreatedDateAsc(Review review);
+  List<Comment> findByReviewIdOrderByCreatedDateTimeAsc(Review review);
 
   // 댓글에 달린 공감수 정렬하여 조회
   List<Comment> findByReviewIdOrderByLikedDesc(Review review);

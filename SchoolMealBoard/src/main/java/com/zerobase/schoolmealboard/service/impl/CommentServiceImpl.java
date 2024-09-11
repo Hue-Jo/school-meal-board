@@ -74,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
         .orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다."));
 
     Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new CommentNotFoundException("해당 댓글이 존재하지 않습니다."));
+        .orElseThrow(() -> new CommentNotFoundException("해당 댓글이 존재하지 않습니다."));
 
     if (!comment.getUserId().getEmail().equals(email)) {
       throw new UnAuthorizedUser("댓글 작성자만 댓글을 삭제할 수 있습니다.");
@@ -90,7 +90,7 @@ public class CommentServiceImpl implements CommentService {
     User user = validateUser(email);
     Review review = validateReview(reviewId);
 
-    List<Comment> comments = commentRepository.findByReviewIdOrderByCreatedDateAsc(review);
+    List<Comment> comments = commentRepository.findByReviewIdOrderByCreatedDateTimeAsc(review);
 
     return comments.stream()
         .map(CommentDto::new)
