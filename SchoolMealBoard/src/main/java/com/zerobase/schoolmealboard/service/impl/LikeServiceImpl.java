@@ -28,7 +28,6 @@ public class LikeServiceImpl implements LikeService {
   @Transactional
   public String toggleLike(Long commentId, Long userId) {
 
-    try {
       User user = userRepository.findById(userId)
           .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
@@ -45,8 +44,6 @@ public class LikeServiceImpl implements LikeService {
       if (likes.isPresent()) {
         likesRepository.delete(likes.get());
         comment.setLiked(comment.getLiked() - 1);
-        commentRepository.save(comment);
-        return "공감이 취소되었습니다.";
       } else {
         Likes newLikes = Likes.builder()
             .comment(comment)
@@ -54,11 +51,13 @@ public class LikeServiceImpl implements LikeService {
             .build();
         likesRepository.save(newLikes);
         comment.setLiked(comment.getLiked() + 1);
-        commentRepository.save(comment);
-        return "공감 처리가 완료되었습니다.";
       }
+
+    try {
+      commentRepository.save(comment);
     } catch (OptimisticLockingFailureException e) {
-      return "잠시 후 다시 시도해주세요";
+      throw new RuntimeException("현재 처리 중인 요청이 많아 잠시 후 다시 시도해 주세요");
     }
+    return likes.isPresent() ? "공감이 취소되었습니다." : "공감 처리 되었습니다.";
   }
 }
