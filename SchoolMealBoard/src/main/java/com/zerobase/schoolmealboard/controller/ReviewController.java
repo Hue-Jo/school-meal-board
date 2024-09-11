@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/review")
+@RequestMapping("/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
 
@@ -35,12 +35,11 @@ public class ReviewController {
   /**
    * 리뷰 작성 (로그인 이후 사용 가능)
    */
-  @PostMapping("/create")
+  @PostMapping
   public ResponseEntity<ReviewDto> createReview(
       @RequestBody @Valid ReviewDto reviewDto) {
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     ReviewDto createdReview = reviewService.createReview(reviewDto, email);
 
@@ -53,13 +52,12 @@ public class ReviewController {
   /**
    * 리뷰 수정 (작성자 ONLY)
    */
-  @PatchMapping("/edit/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<ReviewDto> editReview(
       @PathVariable Long id,
       @RequestBody @Valid ReviewDto.EditReviewDto editReviewDto) {
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     ReviewDto editedReview = reviewService.editReview(id, editReviewDto, email);
 
@@ -69,7 +67,7 @@ public class ReviewController {
   /**
    * 리뷰 삭제 (작성자 ONLY)
    */
-  @DeleteMapping("/delete/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<String> deleteReview(
       @RequestHeader("Authorization") String header,
       @PathVariable Long id) {
@@ -89,8 +87,7 @@ public class ReviewController {
       @RequestParam(defaultValue = "0") int page, // 기본 페이지 번호 0
       @RequestParam(defaultValue = "20") int size) { // 기본 페이지 사이즈 20
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
     Page<ReviewDto> reviews = reviewService.getAllReviews(email, pageable);
@@ -100,13 +97,12 @@ public class ReviewController {
   /**
    * 내가 쓴 리뷰 조회 (최신순 정렬, 페이징처리)
    */
-  @GetMapping("/my-review")
+  @GetMapping("/my-reviews")
   public ResponseEntity<Page<ReviewDto>> getAllMyReviews(
       @RequestParam(defaultValue = "0") int page, // 기본 페이지 번호 0
       @RequestParam(defaultValue = "20") int size) { // 기본 페이지 사이즈 20
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"));
     Page<ReviewDto> reviews = reviewService.getAllMyReviews(email, pageable);
@@ -120,8 +116,7 @@ public class ReviewController {
   public ResponseEntity<ReviewDto> getSpecificReview(
       @PathVariable Long id) {
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String email = authentication.getName();
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
     ReviewDto review = reviewService.getSpecificReview(id, email);
     return ResponseEntity.ok(review);
