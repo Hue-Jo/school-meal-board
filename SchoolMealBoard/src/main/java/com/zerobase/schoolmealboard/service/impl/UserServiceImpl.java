@@ -6,9 +6,11 @@ import com.zerobase.schoolmealboard.dto.UserDto.LogIn;
 import com.zerobase.schoolmealboard.dto.UserDto.SignUp;
 import com.zerobase.schoolmealboard.entity.School;
 import com.zerobase.schoolmealboard.entity.User;
+import com.zerobase.schoolmealboard.exceptions.custom.BannedUserException;
 import com.zerobase.schoolmealboard.repository.SchoolRepository;
 import com.zerobase.schoolmealboard.repository.UserRepository;
 import com.zerobase.schoolmealboard.service.UserService;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,12 @@ public class UserServiceImpl implements UserService {
 
     User registeredUser = userRepository.findByEmail(loginDto.getEmail())
         .orElseThrow(() -> new RuntimeException("등록되지 않은 이메일입니다."));
+
+    // 이용정지된 사용자 여부 확인
+    LocalDate today = LocalDate.now();
+    if (registeredUser.getBanEndDate() != null && registeredUser.getBanEndDate().isAfter(today)) {
+      throw new BannedUserException("이용정지 상태입니다. 정지 해제일은 " + registeredUser.getBanEndDate() + "입니다.");
+    }
 
     if (passwordEncoder.matches(loginDto.getPassword(), registeredUser.getPassword())) {
       return jwtUtil.generateToken(registeredUser.getEmail());

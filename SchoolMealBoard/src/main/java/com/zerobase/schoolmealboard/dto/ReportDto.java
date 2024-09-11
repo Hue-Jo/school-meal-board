@@ -16,7 +16,4 @@ public class ReportDto {
   @NotBlank
   private String reason;        // 신고 사유
 
-  @NotBlank
-  private LocalDate reportDate; // 신고일
-
 }
