@@ -28,7 +28,7 @@ public class ReviewServiceImpl implements ReviewService {
   private final MealRepository mealRepository;
   private final ReviewRepository reviewRepository;
 
-  // 리뷰 생성
+  // 리뷰 작성
   @Override
   @Transactional
   public ReviewDto createReview(ReviewDto reviewDto, String email) {

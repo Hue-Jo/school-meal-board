@@ -51,7 +51,7 @@ public class ReportServiceImpl implements ReportService {
         .build();
     reportRepository.save(report);
 
-    // 해당 피신고자에 대한 오늘의 신고 수 계산
+    // 피신고자의 오늘의 신고 누적수 계산
     int reportedCount = reportRepository.countByReportedUserAndDate(reportedUser, today);
     // 신고 수가 10건 이상이면 이용 정지 처리
     if (reportedCount >= 10) {
