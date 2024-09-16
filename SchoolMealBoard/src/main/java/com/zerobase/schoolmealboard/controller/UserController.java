@@ -47,7 +47,7 @@ public class UserController {
     }
   }
 
-  @PatchMapping("/update")
+  @PatchMapping("/my-profile")
   public ResponseEntity<String> update(@RequestBody @Valid UserDto.Update updateDto) {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -62,7 +62,7 @@ public class UserController {
     }
   }
 
-  @DeleteMapping("/delete")
+  @DeleteMapping("/my-profile")
   public ResponseEntity<String> delete(@RequestBody @Valid UserDto.Delete deleteDto) {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -25,14 +25,15 @@ public class Review {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
-  private User userId;
+  private User user;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "meal_id")
-  private Meal mealId;
+  private Meal meal;
 
   private LocalDate date; // 날짜
   private String title;   // 제목
+
   private String content; // 100자평
   private int rating;     // 별점 (1-5점)
   private String imgUrl;  // 이미지 (선택적)

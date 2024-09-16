@@ -18,7 +18,7 @@ public class SchoolController {
 
   private final SchoolService schoolService;
 
-  @GetMapping("/find-schoolcode")
+  @GetMapping("/code")
   public ResponseEntity<String> findSchoolCode(@RequestBody @Valid SchoolDto schoolDto) {
     try {
       String schoolCode = schoolService.getSchoolCode(schoolDto.getSchoolName());

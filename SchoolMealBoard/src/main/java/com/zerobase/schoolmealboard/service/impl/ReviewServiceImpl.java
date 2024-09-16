@@ -40,8 +40,8 @@ public class ReviewServiceImpl implements ReviewService {
         .orElseThrow(() -> new MealNotFoundException("해당 날짜의 급식이 존재하지 않습니다."));
 
     Review review = Review.builder()
-        .userId(user)
-        .mealId(meal)
+        .user(user)
+        .meal(meal)
         .date(reviewDto.getMealDate())
         .title(reviewDto.getTitle())
         .content(reviewDto.getContent())
@@ -64,7 +64,7 @@ public class ReviewServiceImpl implements ReviewService {
     Review review = reviewRepository.findById(reviewId)
         .orElseThrow(() -> new ReviewNotFoundException("리뷰 게시글이 존재하지 않습니다."));
 
-    if (!review.getUserId().equals(user)) {
+    if (!review.getUser().equals(user)) {
       throw new UnAuthorizedUser("게시자만 글을 수정할 수 있습니다.");
     }
 
@@ -99,7 +99,7 @@ public class ReviewServiceImpl implements ReviewService {
     Review review = reviewRepository.findById(reviewId)
         .orElseThrow(() -> new ReviewNotFoundException("리뷰 게시글이 존재하지 않습니다."));
 
-    if (!review.getUserId().getEmail().equals(email)) {
+    if (!review.getUser().getEmail().equals(email)) {
       throw new UnAuthorizedUser("게시자만 글을 삭제할 수 있습니다.");
     }
     reviewRepository.deleteById(reviewId);
@@ -127,7 +127,7 @@ public class ReviewServiceImpl implements ReviewService {
     Pageable sortedByDate = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
         Sort.Direction.DESC, "date");
 
-    return reviewRepository.findAllByUserId(user, sortedByDate).map(this::toDto);
+    return reviewRepository.findAllByUser(user, sortedByDate).map(this::toDto);
   }
 
   // 특정 게시물 조회
@@ -143,6 +143,11 @@ public class ReviewServiceImpl implements ReviewService {
     return toDto(review);
   }
 
+
+//  public double getAverageRating(Long mealId) {
+//    return reviewRepository.
+//  }
+
   private ReviewDto toDto(Review review) {
     return ReviewDto.builder()
         .mealDate(review.getDate())
@@ -152,4 +157,6 @@ public class ReviewServiceImpl implements ReviewService {
         .imgUrl(review.getImgUrl())
         .build();
   }
+
+
 }

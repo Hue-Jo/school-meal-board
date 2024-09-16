@@ -1,8 +1,6 @@
 package com.zerobase.schoolmealboard.controller;
 
 import com.zerobase.schoolmealboard.dto.CommentDto;
-import com.zerobase.schoolmealboard.exceptions.custom.UnAuthorizedUser;
-import com.zerobase.schoolmealboard.repository.UserRepository;
 import com.zerobase.schoolmealboard.service.CommentService;
 import com.zerobase.schoolmealboard.service.LikeService;
 import java.util.List;
@@ -26,70 +24,65 @@ public class CommentController {
 
   private final CommentService commentService;
   private final LikeService likeService;
-  private final UserRepository userRepository;
 
-  @PostMapping("/{id}")
+  @PostMapping("/{reviewId}")
   public ResponseEntity<CommentDto> createComment(
-      @PathVariable Long id,
+      @PathVariable Long reviewId,
       @RequestBody CommentDto commentDto) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    CommentDto createdComment = commentService.createComment(id, commentDto.getContent(), email);
+    CommentDto createdComment = commentService.createComment(reviewId, commentDto.getContent(),
+        email);
     return (createdComment != null) ?
         ResponseEntity.status(HttpStatus.CREATED).body(createdComment) :
         ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
-  @PatchMapping("/{id}")
+  @PatchMapping("/{commentId}")
   public ResponseEntity<CommentDto> editComment(
-      @PathVariable Long id,
+      @PathVariable Long commentId,
       @RequestBody CommentDto commentDto) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    CommentDto editedComment = commentService.editComment(id, commentDto.getContent(), email);
+    CommentDto editedComment = commentService.editComment(commentId, commentDto.getContent(),
+        email);
     return (editedComment != null) ?
         ResponseEntity.status(HttpStatus.OK).body(editedComment) :
         ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
   }
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteComment(@PathVariable Long id) {
+  @DeleteMapping("/{commentId}")
+  public ResponseEntity<String> deleteComment(@PathVariable Long commentId) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    commentService.deleteComment(id, email);
+    commentService.deleteComment(commentId, email);
     return ResponseEntity.status(HttpStatus.OK).body("댓글이 삭제되었습니다.");
   }
 
-  @PostMapping("/{id}/likes")
-  public ResponseEntity<String> toggleLike(@PathVariable Long id) {
 
+  @PostMapping("/{commentId}/like")
+  public ResponseEntity<String> toggleLike(@PathVariable Long commentId) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
-    Long userId = userRepository.findByEmail(email).get().getUserId();
 
-    try {
-      String likeResult = likeService.toggleLike(id, userId);
-      return ResponseEntity.status(HttpStatus.OK).body(likeResult);
-    } catch (UnAuthorizedUser e) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-    } catch (RuntimeException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("공감처리 중 오류 발생");
-    }
+    String message = likeService.toggleLike(commentId, email);
+    return ResponseEntity.status(HttpStatus.OK).body(message);
   }
 
-  @GetMapping("/{id}/sorted-by-date")
-  public ResponseEntity<List<CommentDto>> getCommentsByDate(@PathVariable Long id) {
+
+  @GetMapping("/{reviewId}/sorted-by-date")
+  public ResponseEntity<List<CommentDto>> getCommentsByDate(@PathVariable Long reviewId) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    List<CommentDto> comments = commentService.getCommentsByCreatedDate(id, email);
+    List<CommentDto> comments = commentService.getCommentsByCreatedDate(reviewId, email);
     return ResponseEntity.status(HttpStatus.OK).body(comments);
 
   }
 
-  @GetMapping("/{id}/sorted-by-likes")
-  public ResponseEntity<List<CommentDto>> getCommentsByLikes(@PathVariable Long id) {
+  @GetMapping("/{reviewId}/sorted-by-likes")
+  public ResponseEntity<List<CommentDto>> getCommentsByLikes(@PathVariable Long reviewId) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    List<CommentDto> comments = commentService.getCommentsByLikes(id, email);
+    List<CommentDto> comments = commentService.getCommentsByLikes(reviewId, email);
     return ResponseEntity.status(HttpStatus.OK).body(comments);
   }
 

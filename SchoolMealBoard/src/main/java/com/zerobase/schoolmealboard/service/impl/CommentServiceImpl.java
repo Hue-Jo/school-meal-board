@@ -27,6 +27,7 @@ public class CommentServiceImpl implements CommentService {
   private final ReviewRepository reviewRepository;
 
 
+  // 댓글 작성
   @Override
   @Transactional
   public CommentDto createComment(Long reviewId, String content, String email) {
@@ -34,13 +35,13 @@ public class CommentServiceImpl implements CommentService {
     User user = validateUser(email);
     Review review = validateReview(reviewId);
 
-    if (!user.getSchoolCode().equals(review.getUserId().getSchoolCode())) {
+    if (!user.getSchoolCode().equals(review.getUser().getSchoolCode())) {
       throw new RuntimeException("같은 학교 학생의 리뷰에만 댓글을 달 수 있습니다.");
     }
 
     Comment comment = Comment.builder()
-        .reviewId(review)
-        .userId(user)
+        .review(review)
+        .user(user)
         .content(content)
         .liked(0) // 초기 공감수 0개
         .build();
@@ -50,6 +51,7 @@ public class CommentServiceImpl implements CommentService {
     return new CommentDto(savedComment);
   }
 
+  // 댓글 수정
   @Override
   @Transactional
   public CommentDto editComment(Long commentId, String content, String email) {
@@ -57,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new CommentNotFoundException("해당 댓글이 존재하지 않습니다."));
 
-    if (!comment.getUserId().getUserId().equals(user.getUserId())) {
+    if (!comment.getUser().getUserId().equals(user.getUserId())) {
       throw new UnAuthorizedUser("댓글 작성자만 댓글을 수정할 수 있습니다.");
     }
 
@@ -66,6 +68,7 @@ public class CommentServiceImpl implements CommentService {
     return new CommentDto(editedComment);
   }
 
+  // 댓글 삭제
   @Override
   @Transactional
   public void deleteComment(Long commentId, String email) {
@@ -76,7 +79,7 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentRepository.findById(commentId)
         .orElseThrow(() -> new CommentNotFoundException("해당 댓글이 존재하지 않습니다."));
 
-    if (!comment.getUserId().getEmail().equals(email)) {
+    if (!comment.getUser().getEmail().equals(email)) {
       throw new UnAuthorizedUser("댓글 작성자만 댓글을 삭제할 수 있습니다.");
     }
 
@@ -90,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
     User user = validateUser(email);
     Review review = validateReview(reviewId);
 
-    List<Comment> comments = commentRepository.findByReviewIdOrderByCreatedDateTimeAsc(review);
+    List<Comment> comments = commentRepository.findByReviewOrderByCreatedDateTimeAsc(review);
 
     return comments.stream()
         .map(CommentDto::new)
@@ -104,7 +107,7 @@ public class CommentServiceImpl implements CommentService {
     User user = validateUser(email);
     Review review = validateReview(reviewId);
 
-    List<Comment> comments = commentRepository.findByReviewIdOrderByLikedDesc(review);
+    List<Comment> comments = commentRepository.findByReviewOrderByLikedDesc(review);
 
     return comments.stream()
         .map(CommentDto::new)
