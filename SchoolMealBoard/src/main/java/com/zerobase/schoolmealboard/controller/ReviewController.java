@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,14 +51,14 @@ public class ReviewController {
   /**
    * 리뷰 수정 (작성자 ONLY)
    */
-  @PatchMapping("/{id}")
+  @PatchMapping("/{reviewId}")
   public ResponseEntity<ReviewDto> editReview(
-      @PathVariable Long id,
+      @PathVariable Long reviewId,
       @RequestBody @Valid ReviewDto.EditReviewDto editReviewDto) {
 
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    ReviewDto editedReview = reviewService.editReview(id, editReviewDto, email);
+    ReviewDto editedReview = reviewService.editReview(reviewId, editReviewDto, email);
 
     return ResponseEntity.ok(editedReview);
   }
@@ -67,15 +66,15 @@ public class ReviewController {
   /**
    * 리뷰 삭제 (작성자 ONLY)
    */
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/{reviewId}")
   public ResponseEntity<String> deleteReview(
       @RequestHeader("Authorization") String header,
-      @PathVariable Long id) {
+      @PathVariable Long reviewId) {
 
     String token = header.replace("Bearer ", "");
     String email = jwtTokenProvider.extractUsername(token);
 
-    reviewService.deleteReview(id, email);
+    reviewService.deleteReview(reviewId, email);
     return ResponseEntity.ok("리뷰가 삭제되었습니다.");
   }
 
@@ -112,13 +111,13 @@ public class ReviewController {
   /**
    * 특정 리뷰 조회
    */
-  @GetMapping("/{id}")
+  @GetMapping("/{reviewId}")
   public ResponseEntity<ReviewDto> getSpecificReview(
-      @PathVariable Long id) {
+      @PathVariable Long reviewId) {
 
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    ReviewDto review = reviewService.getSpecificReview(id, email);
+    ReviewDto review = reviewService.getSpecificReview(reviewId, email);
     return ResponseEntity.ok(review);
   }
 }

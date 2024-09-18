@@ -105,6 +105,10 @@ public class SchoolServiceImpl implements SchoolService {
     }
   }
 
+
+  /**
+   * 학교 이름을 작성하면 학교코드 반환
+   */
   @Override
   public String getSchoolCode(String schoolName) {
     Optional<School> optionalSchool = schoolRepository.findBySchoolName(schoolName);

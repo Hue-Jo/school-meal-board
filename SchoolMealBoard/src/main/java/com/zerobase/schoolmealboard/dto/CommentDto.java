@@ -25,8 +25,8 @@ public class CommentDto {
 
   public CommentDto(Comment comment) {
     this.commentId = comment.getCommentId();
-    this.reviewId = comment.getReviewId().getReviewId();
-    this.nickName = comment.getUserId().getNickName();
+    this.reviewId = comment.getReview().getReviewId();
+    this.nickName = comment.getUser().getNickName();
     this.content = comment.getContent();
     this.likes = comment.getLiked();
   }

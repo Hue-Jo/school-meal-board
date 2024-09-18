@@ -26,7 +26,7 @@ public class UserController {
   private final JwtTokenProvider jwtProvider;
 
 
-  //
+  // 회원가입
   @PostMapping("/sign-up")
   public ResponseEntity<String> signUp(@RequestBody @Valid UserDto.SignUp signUpDto) {
     try {
@@ -37,6 +37,7 @@ public class UserController {
     }
   }
 
+  // 로그인
   @PostMapping("/login")
   public ResponseEntity<String> login(@RequestBody @Valid UserDto.LogIn loginDto) {
     try {
@@ -47,13 +48,13 @@ public class UserController {
     }
   }
 
-  @PatchMapping("/update")
+  // 회원정보 수정
+  @PatchMapping("/my-profile")
   public ResponseEntity<String> update(@RequestBody @Valid UserDto.Update updateDto) {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String email = authentication.getName();
 
-    // 사용자 정보 업데이트
     try {
       userService.updateUser(email, updateDto);
       return ResponseEntity.ok("회원정보가 성공적으로 수정되었습니다.");
@@ -62,7 +63,8 @@ public class UserController {
     }
   }
 
-  @DeleteMapping("/delete")
+  // 회원 탈퇴
+  @DeleteMapping("/my-profile")
   public ResponseEntity<String> delete(@RequestBody @Valid UserDto.Delete deleteDto) {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
