@@ -19,7 +19,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
   List<Comment> findByReviewOrderByLikedDesc(Review review);
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
-  @Query("SELECT c From Comment c WHERE c.commentId = :commentId")
-  Optional<Comment> findByCommentIdWithLock(@Param("commentId") Long commentId);
-
+  @Query("SELECT c FROM Comment c WHERE c.commentId = :commentId")
+  Optional<Comment> findByIdWithLock(@Param("commentId") Long commentId);
 }

@@ -2,6 +2,7 @@ package com.zerobase.schoolmealboard.exceptions;
 
 import com.zerobase.schoolmealboard.exceptions.custom.BannedUserException;
 import com.zerobase.schoolmealboard.exceptions.custom.CommentNotFoundException;
+import com.zerobase.schoolmealboard.exceptions.custom.ConcurrentException;
 import com.zerobase.schoolmealboard.exceptions.custom.MealNotFoundException;
 import com.zerobase.schoolmealboard.exceptions.custom.ReviewNotFoundException;
 import com.zerobase.schoolmealboard.exceptions.custom.UnAuthorizedUser;
@@ -78,5 +79,10 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(BannedUserException.class)
   public ResponseEntity<String> handleBannedUserException(BannedUserException ex) {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(ConcurrentException.class)
+  public ResponseEntity<String> handleConcurrentException(ConcurrentException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(ex.getMessage());
   }
 }
