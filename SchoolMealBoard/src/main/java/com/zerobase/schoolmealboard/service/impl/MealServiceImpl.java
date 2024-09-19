@@ -5,6 +5,7 @@ import com.zerobase.schoolmealboard.ApiResponse.MealResponse;
 import com.zerobase.schoolmealboard.entity.Meal;
 import com.zerobase.schoolmealboard.entity.School;
 import com.zerobase.schoolmealboard.exceptions.custom.MealNotFoundException;
+import com.zerobase.schoolmealboard.exceptions.custom.ReviewNotFoundException;
 import com.zerobase.schoolmealboard.repository.MealRepository;
 import com.zerobase.schoolmealboard.repository.ReviewRepository;
 import com.zerobase.schoolmealboard.repository.SchoolRepository;
@@ -176,5 +177,18 @@ public class MealServiceImpl implements MealService {
 
 
   // 특정 학교코드, 날짜 기입시 해당 급식의 평균별점 반환
+  @Override
+  public double getAverageRating(String schoolCode, LocalDate mealDate) {
+    School school = schoolRepository.findById(schoolCode)
+        .orElseThrow(() -> new MealNotFoundException("해당 학교가 존재하지 않습니다. 학교코드를 다시 한번 확인해주세요"));
 
+    Double averageRating = reviewRepository.findAverageRatingBySchoolCodeAndMealDate(school, mealDate);
+
+    if (averageRating == null) {
+      throw new ReviewNotFoundException("해당 급식은 리뷰가 존재하지 않습니다.");
+    }
+
+    return averageRating;
+
+  }
 }

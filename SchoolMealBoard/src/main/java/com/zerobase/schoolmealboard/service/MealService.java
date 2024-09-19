@@ -24,5 +24,5 @@ public interface MealService {
   List<Meal> getMealBySchoolCodeAndDate(String school, LocalDate date);
 
   // 학교코드와 특정날짜 입력 후 해당 급식의 평균별점 조회
-
+  double getAverageRating(String schoolCode, LocalDate mealDate);
 }

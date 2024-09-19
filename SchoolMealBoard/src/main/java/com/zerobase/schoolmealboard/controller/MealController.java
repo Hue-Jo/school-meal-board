@@ -21,11 +21,23 @@ public class MealController {
 
   // 특정 학교코드와 특정날짜 입력 후 급식 정보 조회
   @GetMapping("/{schoolCode}/{date}")
-  public ResponseEntity<List<Meal>> getMealsBySchoolCodeAndDate(
+  public ResponseEntity<List<Meal>> getMeals(
       @PathVariable String schoolCode,
       @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
     List<Meal> meals = mealService.getMealBySchoolCodeAndDate(schoolCode, date);
     return ResponseEntity.ok(meals);
   }
+
+
+  // 특정 학교코드와 특정날짜 입력 후 해당급식의 평균별점 조회
+  @GetMapping("/{schoolCode}/{date}/average-rating")
+  public ResponseEntity<Double> getAverageRating(
+      @PathVariable String schoolCode,
+      @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+    double averageRating = mealService.getAverageRating(schoolCode, date);
+    return ResponseEntity.ok(averageRating);
+  }
+
 }
