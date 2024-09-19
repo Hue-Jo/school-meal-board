@@ -23,7 +23,8 @@ public class SecurityConfig {
             .requestMatchers(
                 "user/sign-up",
                 "user/login",
-                "school/find-schoolcode").permitAll()
+                "school/code",
+                "meal/**").permitAll()
             .anyRequest().authenticated()
         )
         //  폼 로그인 기능을 비활성화

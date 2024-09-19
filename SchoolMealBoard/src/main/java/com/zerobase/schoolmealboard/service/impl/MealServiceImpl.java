@@ -4,12 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.schoolmealboard.ApiResponse.MealResponse;
 import com.zerobase.schoolmealboard.entity.Meal;
 import com.zerobase.schoolmealboard.entity.School;
+import com.zerobase.schoolmealboard.exceptions.custom.MealNotFoundException;
 import com.zerobase.schoolmealboard.repository.MealRepository;
+import com.zerobase.schoolmealboard.repository.ReviewRepository;
 import com.zerobase.schoolmealboard.repository.SchoolRepository;
 import com.zerobase.schoolmealboard.service.MealService;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +35,7 @@ public class MealServiceImpl implements MealService {
   private final RestTemplate restTemplate;
   private final MealRepository mealRepository;
   private final SchoolRepository schoolRepository;
+  private final ReviewRepository reviewRepository;
 
   @Value("${api.key}")
   private String apiKey;
@@ -151,5 +156,25 @@ public class MealServiceImpl implements MealService {
     mealRepository.deleteByMealDateBetween(twoMonthsAgoStartDate, twoMonthsAgoEndDate);
   }
 
+
+  // 특정 학교코드, 날짜 기입시 해당 급식 정보 반환
+  @Override
+  public List<Meal> getMealBySchoolCodeAndDate(String schoolCode, LocalDate date) {
+
+    School school = schoolRepository.findById(schoolCode)
+        .orElseThrow(() -> new MealNotFoundException("해당 학교가 존재하지 않습니다. 학교코드를 다시 한번 확인해주세요"));
+
+    // 한 학교에 조식 중식 석식이 있는 경우도 있으므로 List로 반환
+    List<Meal> meals = mealRepository.findMealBySchoolCodeAndMealDate(school, date);
+
+    if (meals.isEmpty()) {
+      throw new MealNotFoundException("해당 날짜에 해당하는 급식 정보가 없습니다.");
+    }
+
+    return meals;
+  }
+
+
+  // 특정 학교코드, 날짜 기입시 해당 급식의 평균별점 반환
 
 }
