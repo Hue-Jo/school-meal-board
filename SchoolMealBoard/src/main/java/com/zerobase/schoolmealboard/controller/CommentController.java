@@ -3,7 +3,6 @@ package com.zerobase.schoolmealboard.controller;
 import com.zerobase.schoolmealboard.dto.CommentDto;
 import com.zerobase.schoolmealboard.service.CommentService;
 import com.zerobase.schoolmealboard.service.LikeService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

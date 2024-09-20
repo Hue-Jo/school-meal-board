@@ -1,7 +1,6 @@
 package com.zerobase.schoolmealboard.service;
 
 import com.zerobase.schoolmealboard.dto.CommentDto;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

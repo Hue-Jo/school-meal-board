@@ -12,11 +12,8 @@ import com.zerobase.schoolmealboard.repository.CommentRepository;
 import com.zerobase.schoolmealboard.repository.ReviewRepository;
 import com.zerobase.schoolmealboard.repository.UserRepository;
 import com.zerobase.schoolmealboard.service.CommentService;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,7 +93,8 @@ public class CommentServiceImpl implements CommentService {
     User user = validateUser(email);
     Review review = validateReview(reviewId);
 
-    Page<Comment> comments = commentRepository.findByReviewOrderByCreatedDateTimeAsc(review, pageable);
+    Page<Comment> comments = commentRepository.findByReviewOrderByCreatedDateTimeAsc(review,
+        pageable);
 
     return comments.map(CommentDto::new);
 

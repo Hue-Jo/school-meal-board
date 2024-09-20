@@ -3,7 +3,6 @@ package com.zerobase.schoolmealboard.repository;
 import com.zerobase.schoolmealboard.entity.Comment;
 import com.zerobase.schoolmealboard.entity.Review;
 import jakarta.persistence.LockModeType;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
