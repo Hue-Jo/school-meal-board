@@ -4,7 +4,6 @@ import com.zerobase.schoolmealboard.dto.UserDto;
 import com.zerobase.schoolmealboard.dto.UserDto.LogIn;
 import com.zerobase.schoolmealboard.dto.UserDto.SignUp;
 import com.zerobase.schoolmealboard.dto.UserDto.Update;
-import com.zerobase.schoolmealboard.entity.User;
 
 public interface UserService {
 

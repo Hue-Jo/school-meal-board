@@ -143,11 +143,6 @@ public class ReviewServiceImpl implements ReviewService {
     return toDto(review);
   }
 
-
-//  public double getAverageRating(Long mealId) {
-//    return reviewRepository.
-//  }
-
   private ReviewDto toDto(Review review) {
     return ReviewDto.builder()
         .mealDate(review.getDate())
@@ -157,6 +152,5 @@ public class ReviewServiceImpl implements ReviewService {
         .imgUrl(review.getImgUrl())
         .build();
   }
-
 
 }
