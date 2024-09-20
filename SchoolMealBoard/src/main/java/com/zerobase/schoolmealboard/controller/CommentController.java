@@ -5,6 +5,8 @@ import com.zerobase.schoolmealboard.service.CommentService;
 import com.zerobase.schoolmealboard.service.LikeService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -70,19 +72,23 @@ public class CommentController {
 
 
   @GetMapping("/{reviewId}/sorted-by-date")
-  public ResponseEntity<List<CommentDto>> getCommentsByDate(@PathVariable Long reviewId) {
+  public ResponseEntity<Page<CommentDto>> getCommentsByDate(
+      @PathVariable Long reviewId,
+      Pageable pageable) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    List<CommentDto> comments = commentService.getCommentsByCreatedDate(reviewId, email);
+    Page<CommentDto> comments = commentService.getCommentsByCreatedDate(reviewId, email, pageable);
     return ResponseEntity.status(HttpStatus.OK).body(comments);
 
   }
 
   @GetMapping("/{reviewId}/sorted-by-likes")
-  public ResponseEntity<List<CommentDto>> getCommentsByLikes(@PathVariable Long reviewId) {
+  public ResponseEntity<Page<CommentDto>> getCommentsByLikes(
+      @PathVariable Long reviewId,
+      Pageable pageable) {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    List<CommentDto> comments = commentService.getCommentsByLikes(reviewId, email);
+    Page<CommentDto> comments = commentService.getCommentsByLikes(reviewId, email, pageable);
     return ResponseEntity.status(HttpStatus.OK).body(comments);
   }
 

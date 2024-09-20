@@ -15,6 +15,9 @@ import com.zerobase.schoolmealboard.service.CommentService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,29 +92,26 @@ public class CommentServiceImpl implements CommentService {
 
   // 댓글 조회 (작성 날짜순)
   @Transactional(readOnly = true)
-  public List<CommentDto> getCommentsByCreatedDate(Long reviewId, String email) {
+  public Page<CommentDto> getCommentsByCreatedDate(Long reviewId, String email, Pageable pageable) {
     User user = validateUser(email);
     Review review = validateReview(reviewId);
 
-    List<Comment> comments = commentRepository.findByReviewOrderByCreatedDateTimeAsc(review);
+    Page<Comment> comments = commentRepository.findByReviewOrderByCreatedDateTimeAsc(review, pageable);
 
-    return comments.stream()
-        .map(CommentDto::new)
-        .collect(Collectors.toList());
+    return comments.map(CommentDto::new);
 
   }
 
   // 댓글 조회 (공감순)
   @Transactional(readOnly = true)
-  public List<CommentDto> getCommentsByLikes(Long reviewId, String email) {
+  public Page<CommentDto> getCommentsByLikes(Long reviewId, String email, Pageable pageable) {
     User user = validateUser(email);
     Review review = validateReview(reviewId);
 
-    List<Comment> comments = commentRepository.findByReviewOrderByLikedDesc(review);
+    Page<Comment> comments = commentRepository.findByReviewOrderByLikedDesc(review, pageable);
 
-    return comments.stream()
-        .map(CommentDto::new)
-        .collect(Collectors.toList());
+    return comments.map(CommentDto::new);
+
   }
 
 

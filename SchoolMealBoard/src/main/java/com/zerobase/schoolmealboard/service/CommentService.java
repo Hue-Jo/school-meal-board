@@ -2,6 +2,8 @@ package com.zerobase.schoolmealboard.service;
 
 import com.zerobase.schoolmealboard.dto.CommentDto;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CommentService {
 
@@ -15,8 +17,8 @@ public interface CommentService {
   void deleteComment(Long commentId, String email);
 
   // 댓글 리스트 조회 (작성 날짜순 정렬)
-  List<CommentDto> getCommentsByCreatedDate(Long reviewId, String email);
+  Page<CommentDto> getCommentsByCreatedDate(Long reviewId, String email, Pageable pageable);
 
   // 댓글 리스트 조회 (공감순 정렬)
-  List<CommentDto> getCommentsByLikes(Long reviewId, String email);
+  Page<CommentDto> getCommentsByLikes(Long reviewId, String email, Pageable pageable);
 }
